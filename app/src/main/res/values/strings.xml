@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">2048</string>
+    <string name="_2048_menu">2048 Menu</string>
+    <string name="empty_square">empty square</string>
 </resources>

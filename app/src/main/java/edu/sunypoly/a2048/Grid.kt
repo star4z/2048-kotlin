@@ -3,16 +3,16 @@ package edu.sunypoly.a2048
 /**
  * Created by bdphi on 2/6/2019.
  */
-class Grid(val size: Int, previousState: Array<Array<Tile?>>?) {
-    val cells: Array<Array<Tile?>>
+class Grid(private val size: Int, previousState: Array<Array<Tile?>>?) {
+    private val cells: Array<Array<Tile?>>
 
     init {
         cells = if (previousState != null) fromState(previousState) else empty()
     }
 
-    fun empty(): Array<Array<Tile?>> = Array(size) { Array<Tile?>(size) { null } }
+    private fun empty(): Array<Array<Tile?>> = Array(size) { Array<Tile?>(size) { null } }
 
-    fun fromState(state: Array<Array<Tile?>>): Array<Array<Tile?>> {
+    private fun fromState(state: Array<Array<Tile?>>): Array<Array<Tile?>> {
         val cells = Array(size) { Array<Tile?>(size) { null } }
 
         for (x in 0 until size) {

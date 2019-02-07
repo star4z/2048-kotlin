@@ -8,6 +8,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp">
@@ -15,7 +17,10 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/title_background" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/title_background"
+            android:contentDescription="@string/_2048_menu" />
 
         <TextView
             android:layout_width="match_parent"
