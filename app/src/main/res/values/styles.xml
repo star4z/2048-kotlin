@@ -11,11 +11,11 @@
 
     
     <style name="gameContainer">
-        <item name="android:layout_marginTop">40dp</item>
         <!--<item name="android:padding">15dp</item>-->
         <item name="android:background">@drawable/grid_background</item>
         <item name="android:padding">4dp</item>
-        <item name="android:layout_margin">16dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
     </style>
 
     <style name="tile">
@@ -23,7 +23,7 @@
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_width">0dp</item>
         <item name="layout_constraintDimensionRatio">1</item>
-        <item name="android:padding">4dp</item>
+        <item name="android:padding">8dp</item>
         <item name="android:src">@drawable/grid_cell</item>
     </style>
 
