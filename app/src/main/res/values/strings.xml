@@ -2,4 +2,6 @@
     <string name="app_name">2048</string>
     <string name="_2048_menu">2048 Menu</string>
     <string name="empty_square">empty square</string>
+    <string name="main_instructions">Join the numbers to get to the 2048 tile!</string>
+    <string name="_2048">2048</string>
 </resources>
