@@ -4,4 +4,8 @@
     <string name="empty_square">empty square</string>
     <string name="main_instructions">Join the numbers to get to the 2048 tile!</string>
     <string name="_2048">2048</string>
+    <string name="undo">UNDO</string>
+    <string name="new_game">NEW</string>
+    <string name="score">SCORE</string>
+    <string name="best">BEST</string>
 </resources>
