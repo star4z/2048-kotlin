@@ -2,9 +2,11 @@ package edu.sunypoly.a2048
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.MotionEvent
+import android.view.MotionEvent.ACTION_DOWN
+import android.view.MotionEvent.ACTION_UP
 import android.view.View
 import kotlinx.android.synthetic.main.activity_index.*
+import kotlin.math.abs
 
 class Index : AppCompatActivity() {
 
@@ -14,9 +16,29 @@ class Index : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_index)
 
+        var startPosition: Position? = null
+
         game_container.setOnTouchListener { _, motionEvent ->
              when (motionEvent.action){
-                MotionEvent.ACTION_DOWN -> true
+                ACTION_DOWN -> {
+                    startPosition = Position(motionEvent.getX(0), motionEvent.getY(0))
+                    true
+                }
+                 ACTION_UP -> {
+                     val endPosition = Position(motionEvent.getX(0), motionEvent.getY(0))
+                     if (startPosition != null){
+                         val dx = endPosition.x!! - startPosition!!.x!!
+                         val dy = endPosition.y!! - startPosition!!.y!!
+
+                         if (abs(dx) > abs(dy)){
+                             shift(dx/abs(dx), 0f)
+                         } else {
+                             shift(0f, dy/abs(dy))
+                         }
+                     }
+
+                     true
+                 }
                 else -> false
             }
         }
@@ -37,5 +59,5 @@ class Index : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
-    fun shift(dir: Int){}
+    fun shift(dirX: Float, dirY: Float){}
 }
