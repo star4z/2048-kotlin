@@ -1,12 +1,13 @@
 package edu.sunypoly.a2048
 
+import android.content.SharedPreferences
 import kotlin.math.floor
 
 /**
  * Created by bdphi on 2/6/2019.
  */
-class Grid(private val size: Int, previousState: Array<Array<Tile?>>?) {
-    private val cells: Array<Array<Tile?>>
+class Grid(val size: Int, previousState: State? = null) {
+    var cells: Array<Array<Tile?>>
 
     init {
         cells = if (previousState != null) fromState(previousState) else empty()
@@ -14,12 +15,12 @@ class Grid(private val size: Int, previousState: Array<Array<Tile?>>?) {
 
     fun empty(): Array<Array<Tile?>> = Array(size) { Array<Tile?>(size) { null } }
 
-    fun fromState(state: Array<Array<Tile?>>): Array<Array<Tile?>> {
+    fun fromState(state: State): Array<Array<Tile?>> {
         val cells = Array(size) { Array<Tile?>(size) { null } }
 
         for (x in 0 until size) {
             for (y in 0 until size) {
-                val tile = state[x][y]
+                val tile = state.grid!!.cells[x][y]
                 cells[x][y] = if (tile != null) Tile(tile.position, tile.value) else null
             }
         }
@@ -41,17 +42,17 @@ class Grid(private val size: Int, previousState: Array<Array<Tile?>>?) {
         val cells = ArrayList<Position>()
 
         eachCell { x, y, tile ->
-            if (tile != null){
+            if (tile == null) {
                 cells.add(Position(x, y))
             }
         }
         return cells
     }
 
-    fun eachCell(callback: (Float, Float, Tile?) -> Unit) {
+    fun eachCell(callback: (Int, Int, Tile?) -> Unit) {
         cells.forEachIndexed { x, it ->
             it.forEachIndexed { y, cell ->
-                callback(x.toFloat(), y.toFloat(), cell)
+                callback(x, y, cell)
             }
         }
     }
@@ -60,16 +61,16 @@ class Grid(private val size: Int, previousState: Array<Array<Tile?>>?) {
         return cells.isNotEmpty()
     }
 
-    fun cellAvailable(cell: Tile): Boolean {
+    fun cellAvailable(cell: Position): Boolean {
         return !cellOccupied(cell)
     }
 
-    fun cellOccupied(cell: Tile): Boolean {
+    fun cellOccupied(cell: Position): Boolean {
         return cellContent(cell) != null
     }
 
-    fun cellContent(cell: Tile): Tile? {
-        return if (withinBounds(cell.position))
+    fun cellContent(cell: Position): Tile? {
+        return if (withinBounds(cell))
             cells[cell.x!!.toInt()][cell.y!!.toInt()]
         else
             null
@@ -89,12 +90,15 @@ class Grid(private val size: Int, previousState: Array<Array<Tile?>>?) {
     }
 
     fun serialize(): Grid {
-        var cellState = Array(size) { x ->
+        val cellState = Array(size) { x ->
             Array(size) { y ->
                 if (cells[x][y] != null) cells[x][y]?.serialize() else null
             }
         }
 
-        return Grid(size, cellState)
+        val grid = Grid(size, null)
+        grid.cells = cellState
+
+        return Grid(size, State(grid = grid))
     }
 }

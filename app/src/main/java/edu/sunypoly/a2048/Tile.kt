@@ -3,12 +3,10 @@ package edu.sunypoly.a2048
 /**
  * Created by bdphi on 2/6/2019.
  */
-class Tile (var position: Position?, var value: Int? = 2){
-    var x = position?.x
-    var y = position?.y
+class Tile (var position: Position?, var value: Int? = 2): Position(position?.x, position?.y){
 
     var previousPosition: Position? = null
-    var mergedFrom: Tile? = null
+    var mergedFrom: Pair<Tile?, Tile?>? = null
 
     fun savePosition(){
         previousPosition = Position(x,y)
