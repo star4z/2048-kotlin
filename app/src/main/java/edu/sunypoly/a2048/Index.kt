@@ -2,15 +2,12 @@ package edu.sunypoly.a2048
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.MotionEvent.ACTION_DOWN
-import android.view.MotionEvent.ACTION_UP
 import android.view.View
 import kotlinx.android.synthetic.main.activity_index.*
-import kotlin.math.abs
 
 class Index : AppCompatActivity() {
 
-    val grid = Grid(4, null)
+//    val grid = Grid(4, null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
