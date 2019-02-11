@@ -2,9 +2,7 @@ package edu.sunypoly.a2048
 
 import android.content.Context
 import android.preference.PreferenceManager
-import java.io.File
-import java.io.FileInputStream
-import java.io.ObjectInputStream
+import java.io.*
 
 class StorageManager(val context: Context) {
 
@@ -28,18 +26,21 @@ class StorageManager(val context: Context) {
         }
     }
 
-    fun getGameState(): State {
+    fun getGameState(): State? {
         val fileInputStream = FileInputStream(stateFile)
         val objectInputStream = ObjectInputStream(fileInputStream)
 
         return objectInputStream.readObject() as State
     }
 
-    fun setGameState(serialize: State) {
+    fun setGameState(serialize: State?) {
+        val fileOutputStream = FileOutputStream(stateFile)
+        val objectOutputStream = ObjectOutputStream(fileOutputStream)
 
+        objectOutputStream.writeObject(serialize)
     }
 
     fun clearGameState() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        setGameState(null)
     }
 }

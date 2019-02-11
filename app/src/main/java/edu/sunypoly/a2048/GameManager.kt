@@ -1,8 +1,8 @@
 package edu.sunypoly.a2048
 
-class GameManager (val size: Float, val inputManager: InputManager, val actuator: Actuator, val storageManager: StorageManager) {
+class GameManager (val size: Int, val inputManager: InputManager, val actuator: Actuator, val storageManager: StorageManager) {
 
-    val startTiles = 2
+    private val startTiles = 2
     var keepPlaying = false
     var over = false
     var won = false
@@ -46,7 +46,7 @@ class GameManager (val size: Float, val inputManager: InputManager, val actuator
             keepPlaying = previousState.keepPlaying!!
 
         } else {
-            grid = Grid(size.toInt())
+            grid = Grid(size)
             score = 0
             over = false
             won = false
@@ -116,7 +116,7 @@ class GameManager (val size: Float, val inputManager: InputManager, val actuator
 
     fun move(direction: Int){
         // 0: up, 1: right, 2: down, 3: left
-        var self = this
+        this
 
         if (isGameTerminated()) return //Don't do anything if the game is over
 
@@ -185,7 +185,7 @@ class GameManager (val size: Float, val inputManager: InputManager, val actuator
     }
 
     fun buildTraversals(vector: Vector?): Array<List<Int>> {
-        val traversals = arrayOf(List(size.toInt()){it}, List(size.toInt()){it})
+        val traversals = arrayOf(List(size){it}, List(size){it})
 
         if (vector!!.x == 1) traversals[0] = traversals[0].reversed()
         if (vector.y == 1) traversals[1] = traversals[1].reversed()
@@ -210,10 +210,10 @@ class GameManager (val size: Float, val inputManager: InputManager, val actuator
     }
 
     fun tileMatchesAvailable(): Boolean{
-        var tile: Tile? = null
+        var tile: Tile?
 
-        for (x in 0 until  size.toInt()){
-            for (y in 0 until size.toInt()){
+        for (x in 0 until size){
+            for (y in 0 until size){
                 tile = grid?.cellContent(Position(x, y))
 
                 if (tile != null) {
