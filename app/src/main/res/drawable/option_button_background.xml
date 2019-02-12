@@ -5,5 +5,5 @@
         android:right="2dp"
         android:bottom="2dp" />
     <corners android:radius="3dp" />
-    <solid android:color="#f65e3d" />
+    <solid android:color="@color/redButtonBackground" />
 </shape>

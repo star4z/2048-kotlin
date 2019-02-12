@@ -6,4 +6,12 @@
 
     <color name="offWhiteBackground">#faf8ef</color>
     <color name="offWhiteText">#f9f6f2</color>
+
+    <color name="tanBackground">#A49381</color>
+    <color name="tanTile">#C9BCAC</color>
+    <color name="redButtonBackground">#f65e3d</color>
+    <color name="brownButtonBackground">#3c3a33</color>
+    <color name="yellowButtonBackground">#EDCC5F</color>
+
+    <color name="transparentBrown">#A49381411</color>
 </resources>

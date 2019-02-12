@@ -32,7 +32,7 @@ class InputManager{
 
         var map = {} //0 is up, 1 is right, 2 is down, 3 is left
 
-        //Listens to document for input
+        //Listens to Document for input
 
         //Checks the keyboard input value, and gets output from map
         //If input is a direction, calls emit("move", map[event.which])
