@@ -10,7 +10,7 @@ class Index : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_index)
         windowObject.requestAnimationFrame {
-            GameManager(4, InputManager(), Actuator(), StorageManager(this))
+            GameManager(4, InputManager(), Actuator(this), StorageManager(this))
         }
     }
 

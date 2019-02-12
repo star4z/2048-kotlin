@@ -10,7 +10,7 @@ class Actuator(val context: Activity) {
     val tileContainer = context.findViewById<ConstraintLayout>(R.id.game_container)
     val scoreContainer = context.findViewById<TextView>(R.id.score)
     val bestContainer = context.findViewById<TextView>(R.id.best_score)
-    val messageContainer = context.findViewById<TextView>(R.id.message_container)
+    val messageContainer = context.findViewById<ConstraintLayout>(R.id.message_container)
 
     var score = 0
 
@@ -132,7 +132,7 @@ class Actuator(val context: Activity) {
 
 //        messageContainer.classList.add(type)
         messageContainer.visibility = View.VISIBLE
-        messageContainer.text = message
+        messageContainer.findViewById<TextView>(R.id.message).text = message
     }
 
     fun clearMessage() {
@@ -140,6 +140,6 @@ class Actuator(val context: Activity) {
 //        messageContainer.classList.remove("game-over")
         //TODO: add animation?
         messageContainer.visibility = View.GONE
-        messageContainer.text = ""
+        messageContainer.findViewById<TextView>(R.id.message).text = ""
     }
 }

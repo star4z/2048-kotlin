@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.sunypoly.a2048.Index"
-    android:background="@color/offWhiteBackground">
+    android:background="@color/offWhiteBackground"
+    tools:context="edu.sunypoly.a2048.Index">
 
 
     <TextView
@@ -28,18 +28,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        app:layout_constraintStart_toStartOf="@id/score"
-        app:layout_constraintEnd_toEndOf="@id/score"
-        app:layout_constraintTop_toTopOf="@id/score"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:elevation="1dp"
         android:padding="8dp"
         android:text="@string/score"
-        android:textStyle="bold"
-        android:textColor="@color/offWhiteText"
         android:textAlignment="center"
-        />
+        android:textColor="@color/offWhiteText"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/score"
+        app:layout_constraintStart_toStartOf="@id/score"
+        app:layout_constraintTop_toTopOf="@id/score" />
 
     <TextView
         android:id="@+id/score"
@@ -49,7 +48,6 @@
         android:background="@drawable/score_background"
         android:gravity="bottom"
         android:padding="6dp"
-        tools:text="532"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="24sp"
@@ -57,15 +55,16 @@
         app:layout_constraintBottom_toTopOf="@id/new_game_button"
         app:layout_constraintEnd_toEndOf="@+id/new_game_button"
         app:layout_constraintStart_toStartOf="@+id/new_game_button"
-        app:layout_constraintTop_toTopOf="@id/title" />
+        app:layout_constraintTop_toTopOf="@id/title"
+        tools:text="532" />
 
     <TextView
         android:id="@+id/new_game_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
         android:layout_marginTop="6dp"
+        android:layout_marginEnd="6dp"
         android:background="@drawable/option_button_background"
         android:padding="6dp"
         android:text="@string/new_game"
@@ -73,24 +72,23 @@
         android:textColor="@color/offWhiteText"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/score"
         app:layout_constraintBottom_toTopOf="@id/main_instructions"
         app:layout_constraintEnd_toStartOf="@id/undo_button"
-        app:layout_constraintStart_toEndOf="@id/title" />
+        app:layout_constraintStart_toEndOf="@id/title"
+        app:layout_constraintTop_toBottomOf="@id/score" />
 
     <TextView
-        app:layout_constraintStart_toStartOf="@id/best_score"
-        app:layout_constraintEnd_toEndOf="@id/best_score"
-        app:layout_constraintTop_toTopOf="@id/best_score"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:elevation="1dp"
         android:padding="8dp"
         android:text="@string/best"
-        android:textStyle="bold"
-        android:textColor="@color/offWhiteText"
         android:textAlignment="center"
-        />
+        android:textColor="@color/offWhiteText"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/best_score"
+        app:layout_constraintStart_toStartOf="@id/best_score"
+        app:layout_constraintTop_toTopOf="@id/best_score" />
 
     <TextView
         android:id="@+id/best_score"
@@ -100,7 +98,6 @@
         android:background="@drawable/score_background"
         android:gravity="bottom"
         android:padding="6dp"
-        tools:text="69.6k"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="24sp"
@@ -108,14 +105,15 @@
         app:layout_constraintBottom_toTopOf="@id/undo_button"
         app:layout_constraintEnd_toEndOf="@+id/undo_button"
         app:layout_constraintStart_toStartOf="@+id/undo_button"
-        app:layout_constraintTop_toTopOf="@id/title" />
+        app:layout_constraintTop_toTopOf="@id/title"
+        tools:text="69.6k" />
 
     <TextView
         android:id="@+id/undo_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
         android:layout_marginStart="6dp"
+        android:layout_marginTop="6dp"
         android:background="@drawable/option_button_background"
         android:padding="6dp"
         android:text="@string/undo"
@@ -123,10 +121,10 @@
         android:textColor="@color/offWhiteText"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/best_score"
         app:layout_constraintBottom_toTopOf="@id/main_instructions"
         app:layout_constraintEnd_toEndOf="@+id/game_container"
-        app:layout_constraintStart_toEndOf="@id/new_game_button" />
+        app:layout_constraintStart_toEndOf="@id/new_game_button"
+        app:layout_constraintTop_toBottomOf="@id/best_score" />
 
 
     <TextView
@@ -134,8 +132,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="4dp"
-        android:paddingEnd="4dp"
         android:paddingTop="14dp"
+        android:paddingEnd="4dp"
         android:paddingBottom="14dp"
         android:text="@string/main_instructions"
         android:textAlignment="center"
@@ -153,14 +151,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/main_instructions">
 
-        <TextView
+        <android.support.constraint.ConstraintLayout
             android:id="@+id/message_container"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/transparentBrown"
-            android:elevation="2dp"/>
+            android:elevation="4dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/message"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/transparentBrown"
+                android:elevation="4dp"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:textColor="@color/offWhiteText"
+                android:textSize="50sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Game over!" />
+        </android.support.constraint.ConstraintLayout>
+
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline_vertical_middle"
@@ -307,13 +319,13 @@
 
     <TextView
         android:id="@+id/signature"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="14dp"
-        tools:text="What's my name, b"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="What's my name, b" />
 
 
 </android.support.constraint.ConstraintLayout>
