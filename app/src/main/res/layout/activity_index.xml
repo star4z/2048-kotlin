@@ -173,6 +173,12 @@
                 tools:text="Game over!" />
         </android.support.constraint.ConstraintLayout>
 
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/touch_receiver"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="100dp"/>
+
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline_vertical_middle"

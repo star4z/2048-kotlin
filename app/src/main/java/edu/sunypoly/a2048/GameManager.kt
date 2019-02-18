@@ -12,7 +12,7 @@ class GameManager (val size: Int, val inputManager: InputManager, val actuator: 
 
 
     init {
-        inputManager.on("move") {move(0)} //TODO: Not at all sure how this is supposed to work???
+        inputManager.on("move") {move(0)} //TODO: getDirection somehow
         inputManager.on("restart") {restart()}
         inputManager.on("keepPlaying") {keepPlaying()}
 
