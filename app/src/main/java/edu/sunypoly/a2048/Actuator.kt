@@ -4,6 +4,7 @@ import android.app.Activity
 import android.support.constraint.ConstraintLayout
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 
 class Actuator(val context: Activity) {
@@ -14,10 +15,11 @@ class Actuator(val context: Activity) {
 
     var score = 0
 
+    var tileViews = HashSet<ImageView>()
 
     fun actuate(grid: Grid?, metadata: HashMap<String, Any?>) {
         windowObject.requestAnimationFrame {
-            clearContainer(tileContainer)
+
 
             grid?.cells!!.forEach { colummn ->
                 colummn.forEach { cell ->
@@ -52,11 +54,11 @@ class Actuator(val context: Activity) {
     fun addTile(tile: Tile?) {
 //        val wrapper = Document.createElement("div")
         val inner = TextView(context)
-        var position = tile?.previousPosition ?: Position(tile!!.x, tile.y)
-        var positionClass = positionClass(position)
+        val position = tile?.previousPosition ?: Position(tile!!.x, tile.y)
+        val positionClass = positionClass(position)
 
         // We can't use classlist because it somehow glitches when replacing classes //OG comment
-        var classes = arrayListOf("tile", "tile-" + (tile?.value), positionClass)
+        val classes = arrayListOf("tile", "tile-" + (tile?.value), positionClass)
 
         if (tile!!.value!! > 2048) classes.add("tile-super")
 

@@ -34,8 +34,8 @@ class GameManager (val size: Int, val inputManager: InputManager, val actuator: 
         return over || (won && !keepPlaying)
     }
 
-    fun setup(){
-        var previousState = storageManager.getGameState()
+    private fun setup(){
+        val previousState = storageManager.getGameState()
 
 
         if (previousState != null) {
@@ -58,7 +58,7 @@ class GameManager (val size: Int, val inputManager: InputManager, val actuator: 
         actuate()
     }
 
-    fun addStartTiles(){
+    private fun addStartTiles(){
         for (i in 0 until startTiles){
             addRandomTile()
         }
