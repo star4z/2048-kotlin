@@ -8,10 +8,10 @@ import android.widget.ImageView
 import android.widget.TextView
 
 class Actuator(val context: Activity) {
-    val tileContainer = context.findViewById<ConstraintLayout>(R.id.game_container)
-    val scoreContainer = context.findViewById<TextView>(R.id.score)
-    val bestContainer = context.findViewById<TextView>(R.id.best_score)
-    val messageContainer = context.findViewById<ConstraintLayout>(R.id.message_container)
+    private val tileContainer = context.findViewById<ConstraintLayout>(R.id.game_container)!!
+    private val scoreContainer = context.findViewById<TextView>(R.id.score)!!
+    private val bestContainer = context.findViewById<TextView>(R.id.best_score)!!
+    private val messageContainer = context.findViewById<ConstraintLayout>(R.id.message_container)!!
 
     var score = 0
 
@@ -21,8 +21,8 @@ class Actuator(val context: Activity) {
         windowObject.requestAnimationFrame {
 
 
-            grid?.cells!!.forEach { colummn ->
-                colummn.forEach { cell ->
+            grid?.cells!!.forEach { column ->
+                column.forEach { cell ->
                     if (cell != null) {
                         addTile(cell)
                     }
@@ -106,7 +106,7 @@ class Actuator(val context: Activity) {
     }
 
     fun updateScore(score: Int) {
-        clearContainer(scoreContainer)
+//        clearContainer(scoreContainer)
 
         val difference = score - this.score
         this.score = score

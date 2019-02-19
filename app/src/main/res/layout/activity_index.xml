@@ -12,7 +12,7 @@
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="26dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="4dp"
         android:background="@drawable/title_background"
         android:gravity="center"
@@ -132,9 +132,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="4dp"
-        android:paddingTop="14dp"
         android:paddingEnd="4dp"
-        android:paddingBottom="14dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
         android:text="@string/main_instructions"
         android:textAlignment="center"
         android:textSize="19sp"
@@ -155,7 +155,7 @@
             android:id="@+id/message_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:elevation="4dp"
+            android:elevation="100dp"
             android:visibility="gone">
 
             <TextView
@@ -180,6 +180,8 @@
             android:elevation="100dp"/>
 
 
+
+
         <android.support.constraint.Guideline
             android:id="@+id/guideline_vertical_middle"
             android:layout_width="wrap_content"
@@ -202,12 +204,16 @@
             android:padding="4dp"
             app:layout_constraintGuide_percent="0.75" />
 
+
+
         <ImageView
             android:id="@+id/tile_0"
             style="@style/tile"
             app:layout_constraintEnd_toStartOf="@id/guideline_vertical_left"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <include layout="@layout/tile_2"/>
 
         <ImageView
             style="@style/tile"
@@ -321,7 +327,7 @@
         android:paddingTop="10dp"
         app:layout_constraintEnd_toEndOf="@id/game_container"
         app:layout_constraintTop_toBottomOf="@id/game_container"
-        tools:text="0 moves" />
+        tools:text="0:00" />
 
     <TextView
         android:id="@+id/signature"

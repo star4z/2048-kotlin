@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_height="0dp"
-    android:layout_width="0dp"/>
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:background="@drawable/tile_2_background"
+    android:elevation="8dp"
+    android:layout_margin="8dp"
+    app:layout_constraintDimensionRatio="1"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toStartOf="@id/guideline_vertical_left"
+    app:layout_constraintTop_toTopOf="parent"
+    android:gravity="center"
+    android:textAlignment="center"
+    android:textSize="42sp"
+    android:textStyle="bold"
+    android:text="2" />
