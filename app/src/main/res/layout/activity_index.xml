@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/offWhiteBackground"
-    tools:context="edu.sunypoly.a2048.Index">
+    tools:context="edu.sunypoly.a2048.MainActivity">
 
 
     <TextView
@@ -20,7 +20,7 @@
         android:text="@string/_2048"
         android:textAlignment="center"
         android:textColor="@color/offWhiteText"
-        android:textSize="42sp"
+        android:textSize="36sp"
         android:textStyle="bold"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@id/new_game_button"
@@ -136,6 +136,7 @@
         android:paddingTop="20dp"
         android:paddingBottom="20dp"
         android:text="@string/main_instructions"
+        android:textColor="@color/brownButtonBackground"
         android:textAlignment="center"
         android:textSize="19sp"
         android:textStyle="bold"
@@ -180,7 +181,12 @@
             android:elevation="100dp"/>
 
 
-
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_vertical_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".25" />
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline_vertical_middle"
@@ -190,13 +196,6 @@
             app:layout_constraintGuide_percent="0.5" />
 
         <android.support.constraint.Guideline
-            android:id="@+id/guideline_vertical_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent=".25" />
-
-        <android.support.constraint.Guideline
             android:id="@+id/guideline_vertical_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -204,30 +203,55 @@
             android:padding="4dp"
             app:layout_constraintGuide_percent="0.75" />
 
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_horizontal_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".25" />
 
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_horizontal_middle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_horizontal_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="4dp"
+            app:layout_constraintGuide_percent="0.75" />
+
+
+        <!--<include layout="@layout/tile_2"/>-->
 
         <ImageView
-            android:id="@+id/tile_0"
+            android:id="@+id/tile_0_0"
             style="@style/tile"
             app:layout_constraintEnd_toStartOf="@id/guideline_vertical_left"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <include layout="@layout/tile_2"/>
 
         <ImageView
+            android:id="@+id/tile_0_1"
             style="@style/tile"
             app:layout_constraintEnd_toStartOf="@id/guideline_vertical_middle"
             app:layout_constraintStart_toEndOf="@id/guideline_vertical_left"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:id="@+id/tile_0_2"
             style="@style/tile"
             app:layout_constraintEnd_toStartOf="@id/guideline_vertical_right"
             app:layout_constraintStart_toStartOf="@id/guideline_vertical_middle"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:id="@+id/tile_0_3"
             style="@style/tile"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/guideline_vertical_right"
@@ -235,79 +259,88 @@
 
 
         <ImageView
-            android:id="@+id/tile_4"
+            android:id="@+id/tile_1_0"
             style="@style/tile"
             app:layout_constraintEnd_toStartOf="@id/guideline_vertical_left"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tile_0" />
+            app:layout_constraintTop_toBottomOf="@id/tile_0_0" />
 
         <ImageView
+            android:id="@+id/tile_1_1"
             style="@style/tile"
             app:layout_constraintEnd_toStartOf="@id/guideline_vertical_middle"
             app:layout_constraintStart_toEndOf="@id/guideline_vertical_left"
-            app:layout_constraintTop_toBottomOf="@id/tile_0" />
+            app:layout_constraintTop_toBottomOf="@id/tile_0_0" />
 
         <ImageView
+            android:id="@+id/tile_1_2"
             style="@style/tile"
             app:layout_constraintEnd_toStartOf="@id/guideline_vertical_right"
             app:layout_constraintStart_toStartOf="@id/guideline_vertical_middle"
-            app:layout_constraintTop_toBottomOf="@id/tile_0" />
+            app:layout_constraintTop_toBottomOf="@id/tile_0_0" />
 
         <ImageView
+            android:id="@+id/tile_1_3"
             style="@style/tile"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/guideline_vertical_right"
-            app:layout_constraintTop_toBottomOf="@id/tile_0" />
+            app:layout_constraintTop_toBottomOf="@id/tile_0_0" />
 
         <ImageView
-            android:id="@+id/tile_8"
+            android:id="@+id/tile_2_0"
             style="@style/tile"
             app:layout_constraintEnd_toStartOf="@id/guideline_vertical_left"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tile_4" />
+            app:layout_constraintTop_toBottomOf="@id/tile_1_0" />
 
         <ImageView
+            android:id="@+id/tile_2_1"
             style="@style/tile"
             app:layout_constraintEnd_toStartOf="@id/guideline_vertical_middle"
             app:layout_constraintStart_toEndOf="@id/guideline_vertical_left"
-            app:layout_constraintTop_toBottomOf="@id/tile_4" />
+            app:layout_constraintTop_toBottomOf="@id/tile_1_0" />
 
         <ImageView
+            android:id="@+id/tile_2_2"
             style="@style/tile"
             app:layout_constraintEnd_toStartOf="@id/guideline_vertical_right"
             app:layout_constraintStart_toStartOf="@id/guideline_vertical_middle"
-            app:layout_constraintTop_toBottomOf="@id/tile_4" />
+            app:layout_constraintTop_toBottomOf="@id/tile_1_0" />
 
         <ImageView
+            android:id="@+id/tile_2_3"
             style="@style/tile"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/guideline_vertical_right"
-            app:layout_constraintTop_toBottomOf="@id/tile_4" />
+            app:layout_constraintTop_toBottomOf="@id/tile_1_0" />
 
         <ImageView
-            android:id="@+id/tile_12"
+            android:id="@+id/tile_3_0"
             style="@style/tile"
             app:layout_constraintEnd_toStartOf="@id/guideline_vertical_left"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tile_8" />
+            app:layout_constraintTop_toBottomOf="@id/tile_2_0" />
 
         <ImageView
+            android:id="@+id/tile_3_1"
             style="@style/tile"
             app:layout_constraintEnd_toStartOf="@id/guideline_vertical_middle"
             app:layout_constraintStart_toEndOf="@id/guideline_vertical_left"
-            app:layout_constraintTop_toBottomOf="@id/tile_8" />
+            app:layout_constraintTop_toBottomOf="@id/tile_2_0" />
 
         <ImageView
+            android:id="@+id/tile_3_2"
             style="@style/tile"
             app:layout_constraintEnd_toStartOf="@id/guideline_vertical_right"
             app:layout_constraintStart_toStartOf="@id/guideline_vertical_middle"
-            app:layout_constraintTop_toBottomOf="@id/tile_8" />
+            app:layout_constraintTop_toBottomOf="@id/tile_2_0" />
 
         <ImageView
+            android:id="@+id/tile_3_3"
             style="@style/tile"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/guideline_vertical_right"
-            app:layout_constraintTop_toBottomOf="@id/tile_8" />
+            app:layout_constraintTop_toBottomOf="@id/tile_2_0" />
 
     </android.support.constraint.ConstraintLayout>
 
