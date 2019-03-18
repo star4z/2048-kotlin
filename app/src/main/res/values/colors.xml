@@ -10,23 +10,23 @@
     <color name="tanBackground">#A49381</color>
     <color name="tanTile">#C9BCAC</color>
     <color name="redButtonBackground">#f65e3d</color>
-    <color name="brownButtonBackground">#3c3a33</color>
+    <color name="brownButtonBackground">#ff3c3a33</color>
     <color name="yellowButtonBackground">#EDCC5F</color>
 
     <color name="transparentBrown">#A4938144</color>
 
-    <color name="tileTextLight">#f9f6f2</color>
+    <color name="tileTextLight">#fff9f6f2</color>
 
-    <color name="tile2">#eee4da</color>
-    <color name="tile4">#ede0c8</color>
-    <color name="tile8">#f2b179</color>
-    <color name="tile16">#f59563</color>
-    <color name="tile32">#f67c5f</color>
-    <color name="tile64">#f65e3b</color>
-    <color name="tile128">#edcf72</color>
-    <color name="tile256">#edcf72</color>
-    <color name="tile512">#edc850</color>
-    <color name="tile1024">#edc53f</color>
-    <color name="tile2048">#edc22e</color>
-    <color name="tileSuper">#3c3a32</color>
+    <color name="tile2">#ffeee4da</color>
+    <color name="tile4">#ffede0c8</color>
+    <color name="tile8">#fff2b179</color>
+    <color name="tile16">#fff59563</color>
+    <color name="tile32">#fff67c5f</color>
+    <color name="tile64">#fff65e3b</color>
+    <color name="tile128">#ffedcf72</color>
+    <color name="tile256">#ffedcf72</color>
+    <color name="tile512">#ffedc850</color>
+    <color name="tile1024">#ffedc53f</color>
+    <color name="tile2048">#ffedc22e</color>
+    <color name="tileSuper">#ff3c3a32</color>
 </resources>

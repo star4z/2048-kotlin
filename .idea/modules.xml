@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/2048.iml" filepath="$PROJECT_DIR$/2048.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/2048-kotlin.iml" filepath="$PROJECT_DIR$/.idea/2048-kotlin.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

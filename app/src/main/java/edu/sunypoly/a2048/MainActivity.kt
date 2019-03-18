@@ -1,18 +1,16 @@
 package edu.sunypoly.a2048
 
 import android.os.Bundle
-import android.os.Debug
-import android.service.quicksettings.Tile
 import android.support.constraint.ConstraintSet
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.widget.ImageView
+import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_index.*
 import java.lang.Math.abs
-import java.security.AccessController.getContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -123,31 +121,55 @@ class MainActivity : AppCompatActivity() {
         addAt(newPos)
     }
 
+
     private fun addAt(p: Position) {
         grid[p.r][p.c] = if ((0..9).random() < 9) 2 else 4
 
         val inflater = LayoutInflater.from(this)
-        val tile = inflater.inflate(R.layout.tile_2, null)
+
+        val scale = resources.displayMetrics.density
+
+        val tile = inflater.inflate(R.layout.tile_2, null) as TextView
         tile.id = View.generateViewId()
         val id = tile.id
 
-        game_container.addView(tile)
-        val gridLocId = resources.getIdentifier("tile_${p.r}_${p.c}", "id", packageName)
-        Log.d(TAG, "location id = $gridLocId")
+        with(grid[p.r][p.c]) {
 
-        val scale = resources.displayMetrics.density
-        val pixels = (8 * scale + 0.5f).toInt()
+            tile.text = toString()
+            if (this < 8) {
+                tile.setTextColor(resources.getColor(R.color.brownButtonBackground))
+            } else {
+                tile.setTextColor(resources.getColor(R.color.offWhiteText))
+            }
+
+            if (this <= 2048) {
+                val colorId = resources.getIdentifier("tile$this", "color", packageName)
+                Log.d(TAG, "colorId = $colorId")
+                tile.background.mutate().setTint(colorId)
+            } else {
+                tile.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.tileSuper))
+            }
+
+            val defaultSize = (38 * scale + 0.5f).toInt()
+            val size = defaultSize - ((digits() - 1) * 4)
+
+
+            game_container.addView(tile)
+        }
+
+        val gridLocId = resources.getIdentifier("tile_${p.r}_${p.c}", "id", packageName)
+        val margin = (8 * scale + 0.5f).toInt()
 
         val constraintSet = ConstraintSet()
-        with (constraintSet){
+        with(constraintSet) {
             constrainHeight(id, 0)
             constrainWidth(id, 0)
             setDimensionRatio(id, "1:1")
 
-            connect(id, ConstraintSet.LEFT, gridLocId, ConstraintSet.LEFT, pixels)
-            connect(id, ConstraintSet.RIGHT, gridLocId, ConstraintSet.RIGHT, pixels)
-            connect(id, ConstraintSet.TOP, gridLocId, ConstraintSet.TOP, pixels)
-            connect(id, ConstraintSet.BOTTOM, gridLocId, ConstraintSet.BOTTOM, pixels)
+            connect(id, ConstraintSet.LEFT, gridLocId, ConstraintSet.LEFT, margin)
+            connect(id, ConstraintSet.RIGHT, gridLocId, ConstraintSet.RIGHT, margin)
+            connect(id, ConstraintSet.TOP, gridLocId, ConstraintSet.TOP, margin)
+            connect(id, ConstraintSet.BOTTOM, gridLocId, ConstraintSet.BOTTOM, margin)
             applyTo(game_container)
         }
     }
@@ -338,6 +360,16 @@ class MainActivity : AppCompatActivity() {
 
         return !hasPossibleMove
     }
+}
 
-    data class Position(var r: Int, var c: Int)
+data class Position(var r: Int, var c: Int)
+
+fun Int.digits(): Int {
+    var copy = this
+    var count = 0
+    while (copy != 0) {
+        copy /= 10
+        count++
+    }
+    return count
 }

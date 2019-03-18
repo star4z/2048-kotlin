@@ -138,7 +138,7 @@
         android:text="@string/main_instructions"
         android:textColor="@color/brownButtonBackground"
         android:textAlignment="center"
-        android:textSize="19sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title" />
