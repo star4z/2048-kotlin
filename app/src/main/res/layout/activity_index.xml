@@ -75,7 +75,8 @@
         app:layout_constraintBottom_toTopOf="@id/main_instructions"
         app:layout_constraintEnd_toStartOf="@id/undo_button"
         app:layout_constraintStart_toEndOf="@id/title"
-        app:layout_constraintTop_toBottomOf="@id/score" />
+        app:layout_constraintTop_toBottomOf="@id/score"
+        android:onClick="newGame"/>
 
     <TextView
         android:layout_width="0dp"
