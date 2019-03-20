@@ -6,6 +6,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.transition.TransitionManager
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -149,17 +150,18 @@ class MainActivity : AppCompatActivity() {
             }
 
             if (this <= 2048) {
-                val colorId = resources.getIdentifier("tile$this", "color", packageName)
+                val colorId = ContextCompat.getColor(this@MainActivity, resources.getIdentifier("tile$this", "color", packageName))
                 Log.d(TAG, "colorId = $colorId")
                 tile.background.mutate().setTint(colorId)
             } else {
                 tile.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.tileSuper))
             }
 
-            val defaultSize = (38 * scale + 0.5f).toInt()
+            val defaultSize = 38f
             val size = defaultSize - ((digits() - 1) * 4)//TODO: implement variable text size
             //ALSO nOTE: Not needed here since 4 and 2 both only have 1 digit!
 
+            tile.setTextSize(TypedValue.COMPLEX_UNIT_SP, size)
 
             game_container.addView(tile)
         }
