@@ -6,7 +6,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.transition.TransitionManager
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -32,8 +31,10 @@ class MainActivity : AppCompatActivity() {
     private var grid = Array(4) { Array(4) { 0 } }
 
     private var scale = 1f
-    private val margin = (8 * scale + 0.5f).toInt()
+    private var margin = 0
 
+    private var score = 0
+    private var highScore = 0
 
     private var continuingGame = false
 
@@ -42,10 +43,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_index)
 
         scale = resources.displayMetrics.density
+        margin = tile_0_0.paddingTop
 
         addRandom()
         addRandom()
 
+        updateScore()
         logBoard()
 
         touch_receiver.setOnTouchListener { _, motionEvent ->
@@ -86,6 +89,7 @@ class MainActivity : AppCompatActivity() {
                         }
                         Log.d(TAG, "Moved Something = $movedSomething")
                         if (movedSomething) {
+                            updateScore()
                             addRandom()
                         }
 
@@ -97,6 +101,12 @@ class MainActivity : AppCompatActivity() {
                 else -> touch_receiver.onTouchEvent(motionEvent)
             }
         }
+    }
+
+    private fun updateScore() {
+        val scoreView = findViewById<TextView>(R.id.score)
+        scoreView.text = score.toString()
+        best_score.text = highScore.toString()
     }
 
     override fun onResume() {
@@ -157,11 +167,10 @@ class MainActivity : AppCompatActivity() {
                 tile.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.tileSuper))
             }
 
-            val defaultSize = 38f
-            val size = defaultSize - ((digits() - 1) * 4)//TODO: implement variable text size
-            //ALSO nOTE: Not needed here since 4 and 2 both only have 1 digit!
+            val defaultSize = 40f
+            val size = defaultSize - ((digits() - 1) * 4) //TODO: implement variable text size
 
-            tile.setTextSize(TypedValue.COMPLEX_UNIT_SP, size)
+            tile.textSize = size
 
             game_container.addView(tile)
         }
@@ -279,6 +288,11 @@ class MainActivity : AppCompatActivity() {
                         if (grid[i][j] == grid[newRow][newCol]) {
                             grid[newRow][newCol] = grid[i][j] * 2
 
+                            score += grid[newRow][newCol]
+                            if (score > highScore){
+                                highScore = score
+                            }
+
                             //Remove lower values and insert new value tile
                             game_container.removeView(tile)
                             val oldTile = findViewById<TextView>(newId)
@@ -351,10 +365,13 @@ class MainActivity : AppCompatActivity() {
 
     fun newGame(view: View) {
         clearViews()
+        score = 0
 
         grid = Array(4) { Array(4) { 0 } }
         addRandom()
         addRandom()
+
+        updateScore()
     }
 
     private fun clearViews() {
