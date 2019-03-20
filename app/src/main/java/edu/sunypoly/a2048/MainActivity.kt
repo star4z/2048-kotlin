@@ -122,10 +122,6 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    fun printGrid() {
-        grid.forEach { it.forEach { i -> print("$i ") }; println() }
-    }
-
     private fun addRandom() {
         val available = getAvailableSpaces()
         val newPos = available.removeAt((0 until available.size).random())
@@ -205,161 +201,24 @@ class MainActivity : AppCompatActivity() {
         return when (dir) {
             LEFT -> {
                 shift(Pair(0, -1))
-//                for (i in grid.indices) {
-//                    for (j in grid[i].indices) {
-//                        if (grid[i][j] != 0) {
-//                            if (j > 0) {//first column will always be shifted as left as possible already
-//                                var leftShift = 0
-//                                var finishedShifting = false
-//                                while (j - leftShift > 0 && !finishedShifting) {
-//                                    when {
-//                                        grid[i][j - (leftShift + 1)] == 0 -> leftShift++
-//                                        grid[i][j - (leftShift + 1)] == grid[i][j] -> leftShift++
-//                                        else -> finishedShifting = true
-//                                    }
-//                                }
-//                                if (leftShift != 0) {
-//                                    if (grid[i][j] == grid[i][j - leftShift]) {
-//                                        grid[i][j - leftShift] = grid[i][j] * 2
-//                                    } else {
-//                                        grid[i][j - leftShift] = grid[i][j]
-//                                    }
-//                                    grid[i][j] = 0
-//                                    swiped = true
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
             }
 
             RIGHT -> {
                 shift(Pair(0, 1))
-//                for (i in grid.indices) {
-//                    for (j in grid[i].indices.reversed()) {
-//                        if (grid[i][j] != 0) {
-//                            if (j < 3) {//last column will always be shifted as right as possible already
-//                                var rightShift = 0
-//                                var finishedShifting = false
-//                                while (j + rightShift < 3 && !finishedShifting) {
-//                                    when {
-//                                        grid[i][j + (rightShift + 1)] == 0 -> rightShift++
-//                                        grid[i][j + (rightShift + 1)] == grid[i][j] -> {
-//                                            rightShift++
-//                                            finishedShifting = true
-//                                        }
-//                                        else -> finishedShifting = true
-//                                    }
-//                                }
-//                                if (rightShift != 0) {
-//                                    val tileId = resources.getIdentifier("numbered_tile_${i}_$j", "id", packageName)
-//                                    Log.d(TAG, "tileId = $tileId")
-//                                    val gridLocId = resources.getIdentifier("tile_${i}_${j + rightShift}", "id", packageName)
-//                                    Log.d(TAG, "gridLocId = $gridLocId")
-//
-//                                    val constraintSet = ConstraintSet()
-//                                    constraintSet.connect(tileId, ConstraintSet.LEFT, gridLocId, ConstraintSet.LEFT, margin)
-//                                    constraintSet.connect(tileId, ConstraintSet.RIGHT, gridLocId, ConstraintSet.RIGHT, margin)
-//                                    constraintSet.connect(tileId, ConstraintSet.TOP, gridLocId, ConstraintSet.TOP, margin)
-//                                    constraintSet.connect(tileId, ConstraintSet.BOTTOM, gridLocId, ConstraintSet.BOTTOM, margin)
-//
-//                                    TransitionManager.beginDelayedTransition(game_container)
-//                                    constraintSet.applyTo(game_container)
-//
-//                                    val tile = findViewById<TextView>(tileId)
-//                                    val newId = resources.getIdentifier("numbered_tile_${i}_${j + rightShift}", "id", packageName)
-//
-//                                    if (grid[i][j] == grid[i][j + rightShift]) {
-//                                        grid[i][j + rightShift] = grid[i][j] * 2
-//
-//                                        //Remove lower values and insert new value tile
-//                                        game_container.removeView(tile)
-//                                        val oldTile = findViewById<TextView>(newId)
-//                                        game_container.removeView(oldTile)
-//                                        addAt(Position(i, j + rightShift), grid[i][j + rightShift])
-//                                    } else {
-//                                        grid[i][j + rightShift] = grid[i][j]
-//                                    }
-//
-//                                    tile.id = newId
-//
-//                                    grid[i][j] = 0
-//                                    swiped = true
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
             }
 
             UP -> {
                 shift(Pair(-1, 0))
-//                for (i in grid.indices) {
-//                    for (j in grid[i].indices) {
-//                        if (grid[i][j] != 0) {
-//                            if (i > 0) {
-//                                var shift = 0
-//                                var finishedShifting = false
-//                                while (i - shift > 0 && !finishedShifting) {
-//                                    when {
-//                                        grid[i - (shift + 1)][j] == 0 -> shift++
-//                                        grid[i - (shift + 1)][j] == grid[i][j] -> {
-//                                            shift++
-//                                            finishedShifting = true
-//                                        }
-//                                        else -> finishedShifting = true
-//                                    }
-//                                }
-//                                if (shift != 0) {
-//                                    if (grid[i][j] == grid[i - shift][j]) {
-//                                        grid[i - shift][j] = grid[i][j] * 2
-//                                    } else {
-//                                        grid[i - shift][j] = grid[i][j]
-//                                    }
-//                                    grid[i][j] = 0
-//                                    swiped = true
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
             }
 
             DOWN -> {
                 shift(Pair(1, 0))
-//                for (i in grid.indices.reversed()) {
-//                    for (j in grid[i].indices) {
-//                        if (grid[i][j] != 0) {
-//                            var upShift = 0
-//                            var finishedShifting = false
-//                            while (i + upShift < 3 && !finishedShifting) {
-//                                when {
-//                                    grid[i + (upShift + 1)][j] == 0 -> upShift++
-//                                    grid[i + (upShift + 1)][j] == grid[i][j] -> {
-//                                        upShift++
-//                                        finishedShifting = true
-//                                    }
-//                                    else -> finishedShifting = true
-//                                }
-//                            }
-//                            if (upShift != 0) {
-//                                if (grid[i][j] == grid[i + upShift][j]) {
-//                                    grid[i + upShift][j] = grid[i][j] * 2
-//                                } else {
-//                                    grid[i + upShift][j] = grid[i][j]
-//                                }
-//                                grid[i][j] = 0
-//                                swiped = true
-//                            }
-//
-//                        }
-//                    }
-//                }
             }
             else -> false
         }
     }
 
+    @Suppress("RemoveCurlyBracesFromTemplate")
     private fun shift(vector: Pair<Int, Int>): Boolean {
         var swiped = false
 
@@ -373,48 +232,34 @@ class MainActivity : AppCompatActivity() {
                     var shift = 0
                     var finishedShifting = false
 
-                    when {
-                        vector.first != 0 ->
-                            while (((vector.first > 0 && i + vector.first * shift < 3)
-                                            || (vector.first < 0 && i + vector.first * shift > 0))
-                                    && !finishedShifting) {
-                                when {
-                                    grid[i + vector.first * (shift + 1)][j] == 0 -> shift++
-                                    grid[i + vector.first * (shift + 1)][j] == grid[i][j] -> {
-                                        shift++
-                                        finishedShifting = true
-                                    }
-                                    else -> finishedShifting = true
-                                }
+                    while (((vector.first > 0 && i + vector.first * shift < 3)
+                                    || (vector.first < 0 && i + vector.first * shift > 0)
+                                    || (vector.second > 0 && j + vector.second * shift < 3)
+                                    || (vector.second < 0 && j + vector.second * shift > 0))
+                            && !finishedShifting) {
+                        val rowToCheck = i + vector.first * (shift + 1)
+                        val colToCheck = j + vector.second * (shift + 1)
+                        when {
+                            grid[rowToCheck][colToCheck] == 0 -> shift++
+                            grid[rowToCheck][colToCheck] == grid[i][j] -> {
+                                shift++
+                                finishedShifting = true
                             }
-                        else ->
-                            while (((vector.second > 0 && j + vector.second * shift < 3)
-                                            || (vector.second < 0 && j + vector.second * shift > 0))
-                                    && !finishedShifting) {
-                                when {
-                                    grid[i][j + vector.second * (shift + 1)] == 0 -> shift++
-                                    grid[i][j + vector.second * (shift + 1)] == grid[i][j] -> {
-                                        shift++
-                                        finishedShifting = true
-                                    }
-                                    else -> finishedShifting = true
-                                }
-                            }
+                            else -> finishedShifting = true
+                        }
                     }
                     if (shift != 0) {
                         val tileIdName = "numbered_tile_${i}_$j"
                         val tileId = resources.getIdentifier(tileIdName, "id", packageName)
                         Log.d(TAG, "tileId =  $tileIdName ($tileId)")
 
-                        var gridIdName: String
-                        var newId: Int
-                        if (vector.first != 0) {
-                            gridIdName = "tile_${i + vector.first * shift}_${j}"
-                            newId = resources.getIdentifier("numbered_tile_${i + vector.first * shift}_${j}", "id", packageName)
-                        } else {
-                            gridIdName = "tile_${i}_${j + vector.second * shift}"
-                            newId = resources.getIdentifier("numbered_tile_${i}_${j + vector.second * shift}", "id", packageName)
-                        }
+
+                        val newRow = i + vector.first * shift
+                        val newCol = j + vector.second * shift
+
+                        val gridIdName = "tile_${newRow}_${newCol}"
+                        val newId = resources.getIdentifier("numbered_tile_${newRow}_${newCol}", "id", packageName)
+
                         val gridLocId = resources.getIdentifier(gridIdName, "id", packageName)
                         Log.d(TAG, "gridLocId = $gridIdName ($gridLocId)")
 
@@ -429,32 +274,16 @@ class MainActivity : AppCompatActivity() {
 
                         val tile = findViewById<TextView>(tileId)
 
-                        if (vector.first != 0) {
+                        if (grid[i][j] == grid[newRow][newCol]) {
+                            grid[newRow][newCol] = grid[i][j] * 2
 
-                            if (grid[i][j] == grid[i + vector.first * shift][j]) {
-                                grid[i + vector.first * shift][j] = grid[i][j] * 2
-
-                                //Remove lower values and insert new value tile
-                                game_container.removeView(tile)
-                                val oldTile = findViewById<TextView>(newId)
-                                game_container.removeView(oldTile)
-                                addAt(Position(i + vector.first * shift, j), grid[i + vector.first * shift][j])
-                            } else {
-                                grid[i + vector.first * shift][j] = grid[i][j]
-                            }
+                            //Remove lower values and insert new value tile
+                            game_container.removeView(tile)
+                            val oldTile = findViewById<TextView>(newId)
+                            game_container.removeView(oldTile)
+                            addAt(Position(newRow, newCol), grid[newRow][newCol])
                         } else {
-
-                            if (grid[i][j] == grid[i][j + vector.second * shift]) {
-                                grid[i][j + vector.second * shift] = grid[i][j] * 2
-
-                                //Remove lower values and insert new value tile
-                                game_container.removeView(tile)
-                                val oldTile = findViewById<TextView>(newId)
-                                game_container.removeView(oldTile)
-                                addAt(Position(i, j + vector.second * shift), grid[i][j + vector.second * shift])
-                            } else {
-                                grid[i][j + vector.second * shift] = grid[i][j]
-                            }
+                            grid[newRow][newCol] = grid[i][j]
                         }
 
                         tile.id = newId
