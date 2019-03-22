@@ -35,6 +35,8 @@ class MainActivity : AppCompatActivity() {
 
     private var score = 0
     private var highScore = 0
+    private var moveCount = 0
+    private var time = 0L
 
     private var continuingGame = false
 
@@ -89,6 +91,7 @@ class MainActivity : AppCompatActivity() {
                         }
                         Log.d(TAG, "Moved Something = $movedSomething")
                         if (movedSomething) {
+                            moveCount++
                             updateScore()
                             addRandom()
                         }
@@ -105,8 +108,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateScore() {
         val scoreView = findViewById<TextView>(R.id.score)
-        scoreView.text = score.toString()
-        best_score.text = highScore.toString()
+        scoreView.text = formatScore(score)
+        best_score.text = formatScore(highScore)
+    }
+
+    private fun formatScore(s: Int): String {
+        return when {
+            s >= 1_000_000_000 -> "${(s / 100_000_000).toFloat() / 10}b"
+            s >= 1_000_000 -> "${(s / 100_000).toFloat() / 10}m"
+            s >= 1_000 -> "${(s / 100).toFloat() / 10}k"
+            else -> s.toString()
+        }
     }
 
     override fun onResume() {
