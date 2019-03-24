@@ -3,32 +3,23 @@ package edu.sunypoly.a2048
 import android.os.Bundle
 import android.support.constraint.ConstraintSet
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_index.*
-import java.lang.Math.abs
+
+val TAG:(Any) -> String = {it.javaClass.simpleName}
 
 class MainActivity : AppCompatActivity() {
 
-    private val TAG = this.javaClass.simpleName
-
-    private var startX = 0f
-    private var startY = 0f
-    private var swipedAlready = false
-
-    private val minimumRegisteredDistance = 100f
-
-    private val RIGHT = 0
-    private val UP = 1
-    private val LEFT = 2
-    private val DOWN = 3
 
     private var grid = Array(4) { Array(4) { 0 } }
+    private var tileGrid = Array(4) {Array<TextView?>(4){null }}
 
     private var scale = 1f
     private var margin = 0
@@ -44,81 +35,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_index)
 
+        val tan = ContextCompat.getColor(this, R.color.colorPrimary)
+//        window.statusBarColor = tan
+        window.navigationBarColor = tan
         scale = resources.displayMetrics.density
         margin = tile_0_0.paddingTop
 
-        addRandom()
-        addRandom()
+        newGame()
 
-        updateScore()
-        logBoard()
-
-        touch_receiver.setOnTouchListener { _, motionEvent ->
-            val action = motionEvent.action
-
-            when (action) {
-                MotionEvent.ACTION_UP -> {
-                    swipedAlready = false
-                    true
-                }
-                MotionEvent.ACTION_DOWN -> {
-                    startX = motionEvent.x
-                    startY = motionEvent.y
-                    true
-                }
-                MotionEvent.ACTION_MOVE -> {
-
-                    val dx = motionEvent.x - startX
-                    val dy = motionEvent.y - startY
-
-                    if (!swipedAlready && (abs(dx) > minimumRegisteredDistance || abs(dy) > minimumRegisteredDistance)) {
-                        val movedSomething = if (abs(dx) > abs(dy)) {
-                            if (dx > 0) {
-                                Log.v("Input", "swiped right")
-                                swipe(RIGHT)
-                            } else {
-                                Log.v("Input", "swiped left")
-                                swipe(LEFT)
-                            }
-                        } else {
-                            if (dy > 0) {
-                                Log.v("Input", "swiped down")
-                                swipe(DOWN)
-                            } else {
-                                Log.v("Input", "swiped up")
-                                swipe(UP)
-                            }
-                        }
-                        Log.d(TAG, "Moved Something = $movedSomething")
-                        if (movedSomething) {
-                            moveCount++
-                            updateScore()
-                            addRandom()
-                        }
-
-                        logBoard()
-                        swipedAlready = true
-                    }
-                    true
-                }
-                else -> touch_receiver.onTouchEvent(motionEvent)
-            }
-        }
-    }
-
-    private fun updateScore() {
-        val scoreView = findViewById<TextView>(R.id.score)
-        scoreView.text = formatScore(score)
-        best_score.text = formatScore(highScore)
-    }
-
-    private fun formatScore(s: Int): String {
-        return when {
-            s >= 1_000_000_000 -> "${(s / 100_000_000).toFloat() / 10}b"
-            s >= 1_000_000 -> "${(s / 100_000).toFloat() / 10}m"
-            s >= 1_000 -> "${(s / 100).toFloat() / 10}k"
-            else -> s.toString()
-        }
+        touch_receiver.setOnTouchListener(TileTouchListener(this))
     }
 
     override fun onResume() {
@@ -141,6 +66,39 @@ class MainActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
+    fun onMove() {
+        moveCount++
+        updateMoveCount()
+        updateScore()
+        addRandom()
+        logBoard()
+    }
+
+    private fun updateScore() {
+        val scoreView = findViewById<TextView>(R.id.score)
+        scoreView.text = formatScore(score)
+        best_score.text = formatScore(highScore)
+    }
+
+    private fun formatScore(s: Int): String {
+        return when {
+            s >= 1_000_000_000 -> "${(s / 100_000_000).toFloat() / 10}b"
+            s >= 1_000_000 -> "${(s / 100_000).toFloat() / 10}m"
+            s >= 1_000 -> "${(s / 100).toFloat() / 10}k"
+            else -> s.toString()
+        }
+    }
+
+    fun updateMoveCount() {
+        val movesText = if (moveCount == 1) {
+            "1 move"
+        } else {
+            "$moveCount moves"
+        }
+        move_count_text_view.text = movesText
+    }
+
+
     fun promptContinue(): Boolean {
         return true
     }
@@ -152,15 +110,17 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun addAt(p: Position, value: Int = if ((0..9).random() < 9) 2 else 4) {
+    internal fun addAt(p: Position, value: Int = if ((0..9).random() < 9) 2 else 4) {
         grid[p.r][p.c] = value
 
         val inflater = LayoutInflater.from(this)
 
 
         val tile = inflater.inflate(R.layout.tile_2, null) as TextView
-        tile.id = resources.getIdentifier("numbered_tile_${p.r}_${p.c}", "id", packageName)
+        tile.id = View.generateViewId()
         val id = tile.id
+
+        tileGrid[p.r][p.c] = tile
 
         with(grid[p.r][p.c]) {
 
@@ -173,14 +133,14 @@ class MainActivity : AppCompatActivity() {
 
             if (this <= 2048) {
                 val colorId = ContextCompat.getColor(this@MainActivity, resources.getIdentifier("tile$this", "color", packageName))
-                Log.d(TAG, "colorId = $colorId")
+                Log.d(TAG(this), "colorId = $colorId")
                 tile.background.mutate().setTint(colorId)
             } else {
                 tile.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.tileSuper))
             }
 
             val defaultSize = 40f
-            val size = defaultSize - ((digits() - 1) * 4) //TODO: implement variable text size
+            val size = defaultSize - ((length() - 1) * 4)
 
             tile.textSize = size
 
@@ -189,7 +149,7 @@ class MainActivity : AppCompatActivity() {
 
         val gridLocIdName = "tile_${p.r}_${p.c}"
         val gridLocId = resources.getIdentifier(gridLocIdName, "id", packageName)
-        Log.d(TAG, "gridLocId = $gridLocIdName ($gridLocId)")
+        Log.d(TAG(this), "gridLocId = $gridLocIdName ($gridLocId)")
 
         val constraintSet = ConstraintSet()
         with(constraintSet) {
@@ -197,12 +157,16 @@ class MainActivity : AppCompatActivity() {
             constrainWidth(id, 0)
             setDimensionRatio(id, "1:1")
 
-            connect(id, ConstraintSet.LEFT, gridLocId, ConstraintSet.LEFT, margin)
-            connect(id, ConstraintSet.RIGHT, gridLocId, ConstraintSet.RIGHT, margin)
-            connect(id, ConstraintSet.TOP, gridLocId, ConstraintSet.TOP, margin)
-            connect(id, ConstraintSet.BOTTOM, gridLocId, ConstraintSet.BOTTOM, margin)
+            constrainToTarget(this, id, gridLocId)
             applyTo(game_container)
         }
+    }
+
+    private fun constrainToTarget(constraintSet: ConstraintSet, sourceId: Int, targetId: Int) {
+        constraintSet.connect(sourceId, ConstraintSet.LEFT, targetId, ConstraintSet.LEFT, margin)
+        constraintSet.connect(sourceId, ConstraintSet.RIGHT, targetId, ConstraintSet.RIGHT, margin)
+        constraintSet.connect(sourceId, ConstraintSet.TOP, targetId, ConstraintSet.TOP, margin)
+        constraintSet.connect(sourceId, ConstraintSet.BOTTOM, targetId, ConstraintSet.BOTTOM, margin)
     }
 
     private fun getAvailableSpaces(): ArrayList<Position> {
@@ -218,101 +182,65 @@ class MainActivity : AppCompatActivity() {
         return l
     }
 
-    private fun swipe(dir: Int): Boolean {
-
-
-        return when (dir) {
-            LEFT -> {
-                shift(Pair(0, -1))
-            }
-
-            RIGHT -> {
-                shift(Pair(0, 1))
-            }
-
-            UP -> {
-                shift(Pair(-1, 0))
-            }
-
-            DOWN -> {
-                shift(Pair(1, 0))
-            }
-            else -> false
-        }
-    }
 
     @Suppress("RemoveCurlyBracesFromTemplate")
-    private fun shift(vector: Pair<Int, Int>): Boolean {
+    internal fun shiftBoard(directionVector: Pair<Int, Int>): Boolean {
         var swiped = false
 
-        val rowIndices = if (vector.first > 0) grid.indices.reversed() else grid.indices
+//        val positionsToUpgrade = HashMap<Position, Int>()
+        val transition = AutoTransition()
+
+        val rowIndices = if (directionVector.first > 0) grid.indices.reversed() else grid.indices
+        val constraintSet = ConstraintSet()
 
         for (i in rowIndices) {
-            val colIndices = if (vector.second > 0) grid[i].indices.reversed() else grid.indices
+            val colIndices = if (directionVector.second > 0) grid[i].indices.reversed() else grid.indices
 
             for (j in colIndices) {
                 if (grid[i][j] != 0) {
-                    var shift = 0
-                    var finishedShifting = false
-
-                    while (((vector.first > 0 && i + vector.first * shift < 3)
-                                    || (vector.first < 0 && i + vector.first * shift > 0)
-                                    || (vector.second > 0 && j + vector.second * shift < 3)
-                                    || (vector.second < 0 && j + vector.second * shift > 0))
-                            && !finishedShifting) {
-                        val rowToCheck = i + vector.first * (shift + 1)
-                        val colToCheck = j + vector.second * (shift + 1)
-                        when {
-                            grid[rowToCheck][colToCheck] == 0 -> shift++
-                            grid[rowToCheck][colToCheck] == grid[i][j] -> {
-                                shift++
-                                finishedShifting = true
-                            }
-                            else -> finishedShifting = true
-                        }
-                    }
+                    val shift = getMaxShift(directionVector, i, j)
                     if (shift != 0) {
                         val tileIdName = "numbered_tile_${i}_$j"
                         val tileId = resources.getIdentifier(tileIdName, "id", packageName)
-                        Log.d(TAG, "tileId =  $tileIdName ($tileId)")
+                        Log.d(TAG(this), "tileId =  $tileIdName ($tileId)")
 
-
-                        val newRow = i + vector.first * shift
-                        val newCol = j + vector.second * shift
+                        val newRow = i + directionVector.first * shift
+                        val newCol = j + directionVector.second * shift
 
                         val gridIdName = "tile_${newRow}_${newCol}"
                         val newId = resources.getIdentifier("numbered_tile_${newRow}_${newCol}", "id", packageName)
 
                         val gridLocId = resources.getIdentifier(gridIdName, "id", packageName)
-                        Log.d(TAG, "gridLocId = $gridIdName ($gridLocId)")
+                        Log.d(TAG(this), "gridLocId = $gridIdName ($gridLocId)")
 
-                        val constraintSet = ConstraintSet()
-                        constraintSet.connect(tileId, ConstraintSet.LEFT, gridLocId, ConstraintSet.LEFT, margin)
-                        constraintSet.connect(tileId, ConstraintSet.RIGHT, gridLocId, ConstraintSet.RIGHT, margin)
-                        constraintSet.connect(tileId, ConstraintSet.TOP, gridLocId, ConstraintSet.TOP, margin)
-                        constraintSet.connect(tileId, ConstraintSet.BOTTOM, gridLocId, ConstraintSet.BOTTOM, margin)
+                        constrainToTarget(constraintSet, tileId, gridLocId)
 
-                        TransitionManager.beginDelayedTransition(game_container)
-                        constraintSet.applyTo(game_container)
 
                         val tile = findViewById<TextView>(tileId)
+
 
                         if (grid[i][j] == grid[newRow][newCol]) {
                             grid[newRow][newCol] = grid[i][j] * 2
 
                             score += grid[newRow][newCol]
-                            if (score > highScore){
+                            if (score > highScore) {
                                 highScore = score
                             }
 
+//                            positionsToUpgrade[Position(newRow, newCol)] =
                             //Remove lower values and insert new value tile
-                            game_container.removeView(tile)
                             val oldTile = findViewById<TextView>(newId)
-                            game_container.removeView(oldTile)
-                            addAt(Position(newRow, newCol), grid[newRow][newCol])
+                            val transitionListener = OnCombineTransitionListener(this, game_container, Position(newRow, newCol), grid[newRow][newCol], tile, oldTile)
+                            transition.addListener(transitionListener)
+//                            game_container.removeView(tile)
+//                            game_container.removeView(oldTile)
+//                            addAt(Position(newRow, newCol), grid[newRow][newCol])
+
                         } else {
                             grid[newRow][newCol] = grid[i][j]
                         }
+
+
 
                         tile.id = newId
 
@@ -323,13 +251,40 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+
+        TransitionManager.beginDelayedTransition(game_container, transition)
+        constraintSet.applyTo(game_container)
+
         return swiped
+    }
+
+    private fun getMaxShift(vector: Pair<Int, Int>, i: Int, j: Int): Int {
+        var shift = 0
+        var finishedShifting = false
+
+        while (((vector.first > 0 && i + vector.first * shift < 3)
+                        || (vector.first < 0 && i + vector.first * shift > 0)
+                        || (vector.second > 0 && j + vector.second * shift < 3)
+                        || (vector.second < 0 && j + vector.second * shift > 0))
+                && !finishedShifting) {
+            val rowToCheck = i + vector.first * (shift + 1)
+            val colToCheck = j + vector.second * (shift + 1)
+            when {
+                grid[rowToCheck][colToCheck] == 0 -> shift++
+                grid[rowToCheck][colToCheck] == grid[i][j] -> {
+                    shift++
+                    finishedShifting = true
+                }
+                else -> finishedShifting = true
+            }
+        }
+        return shift
     }
 
     private fun logBoard() {
         var s = ""
         grid.forEach { row -> s += "\n"; row.forEach { s += "$it " } }
-        Log.v(TAG, s)
+        Log.v(TAG(this), s)
     }
 
     private fun gameIsWon(): Boolean {
@@ -375,7 +330,23 @@ class MainActivity : AppCompatActivity() {
         return !hasPossibleMove
     }
 
-    fun newGame(view: View) {
+    @Suppress("UNUSED_PARAMETER")
+    fun promptNewGame(view: View?) {
+        AlertDialog.Builder(this).apply {
+            title = "New Game"
+            setMessage("Are you sure you want to start a new game?")
+            setPositiveButton("Yes") { _, _ ->
+                newGame()
+            }
+            setNegativeButton("No", null)
+        }.also {
+            it.create()
+            it.show()
+        }
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun newGame() {
         clearViews()
         score = 0
 
@@ -384,12 +355,13 @@ class MainActivity : AppCompatActivity() {
         addRandom()
 
         updateScore()
+        updateMoveCount()
+//        logBoard()
     }
 
     private fun clearViews() {
-        for (i in (0..3)) {
-            for (j in (0..3)) {
-                val view = findViewById<TextView>(resources.getIdentifier("numbered_tile_${i}_$j", "id", packageName))
+        tileGrid.forEach { row ->
+            row.forEach{view ->
                 view?.let { game_container.removeView(view) }
             }
         }
@@ -398,7 +370,7 @@ class MainActivity : AppCompatActivity() {
 
 data class Position(var r: Int, var c: Int)
 
-fun Int.digits(): Int {
+fun Int.length(): Int {
     var copy = this
     var count = 0
     while (copy != 0) {
