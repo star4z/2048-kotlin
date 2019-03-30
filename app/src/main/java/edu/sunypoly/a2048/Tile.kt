@@ -1,11 +1,12 @@
 package edu.sunypoly.a2048
 
 import android.widget.TextView
+import java.io.Serializable
 
-data class Tile(var pos: Pos, var value: Int = 0){
+data class Tile(var pos: Pos, var value: Int = 0): Serializable{
     var previousPos: Pos? = null
     var mergedFrom: Pair<Tile, Tile>? = null
-    var textView: TextView? = null
+    @Transient var textView: TextView? = null
 
 
     override fun equals(other: Any?): Boolean {
@@ -34,4 +35,5 @@ data class Tile(var pos: Pos, var value: Int = 0){
     fun updatePosition(p: Pos){
         pos = p
     }
+
 }

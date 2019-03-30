@@ -146,7 +146,8 @@
         app:layout_constraintBottom_toTopOf="@id/main_instructions"
         app:layout_constraintEnd_toEndOf="@+id/game_container"
         app:layout_constraintStart_toEndOf="@id/new_game_button"
-        app:layout_constraintTop_toBottomOf="@id/best_score_box" />
+        app:layout_constraintTop_toBottomOf="@id/best_score_box"
+        android:onClick="undo"/>
 
 
     <TextView

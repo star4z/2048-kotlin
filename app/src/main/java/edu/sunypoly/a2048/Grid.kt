@@ -1,8 +1,9 @@
 package edu.sunypoly.a2048
 
+import java.io.Serializable
 import java.util.*
 
-class Grid(val size: Int): Iterable<Tile?> {
+class Grid(val size: Int): Iterable<Tile?>, Serializable {
 
 
     private var tileGrid = Array(size) { Array<Tile?>(size) { null } }

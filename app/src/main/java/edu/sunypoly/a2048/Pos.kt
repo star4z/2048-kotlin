@@ -1,7 +1,9 @@
 package edu.sunypoly.a2048
 
+import java.io.Serializable
+
 //stores a x,y pair
-data class Pos(var x: Int, var y: Int) {
+data class Pos(var x: Int, var y: Int): Serializable {
     operator fun plus(pos: Pos): Pos{
         return Pos(x + pos.x, y + pos.y)
     }

@@ -1,6 +1,7 @@
 package edu.sunypoly.a2048
 
 import android.annotation.SuppressLint
+import android.net.http.SslCertificate.saveState
 import android.os.Bundle
 import android.support.constraint.ConstraintSet
 import android.support.v4.content.ContextCompat
@@ -12,7 +13,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_index.*
+import java.io.*
+import java.lang.Exception
 import java.lang.IllegalArgumentException
 
 val TAG: (Any) -> String = { it.javaClass.simpleName }
@@ -20,7 +24,9 @@ val TAG: (Any) -> String = { it.javaClass.simpleName }
 class MainActivity : AppCompatActivity() {
 
     private var grid = Grid(4)
-    private var lastGrid: Grid? = null
+
+    private var currentState = State(grid)
+    private var previousState: State? = null
 
     private var scale = 1f
     private var margin = 0
@@ -44,14 +50,21 @@ class MainActivity : AppCompatActivity() {
         scale = resources.displayMetrics.density
         margin = tile_0_0.paddingTop
 
-        newGame()
 
-        logBoard()
-        touch_receiver.setOnTouchListener(TileTouchListener(this))
     }
 
     override fun onResume() {
         super.onResume()
+
+        if (loadState()) {
+            updateToMatchState(true)
+        } else {
+            newGame()
+        }
+
+        logBoard()
+        touch_receiver.setOnTouchListener(TileTouchListener(this))
+
         hideSystemUI()
     }
 
@@ -154,13 +167,26 @@ class MainActivity : AppCompatActivity() {
 //                Log.d(TAG(this), "colorId = $colorId")
                 background.mutate().setTint(colorId)
             } else {
-                setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.tileSuper))
+                background.mutate().setTint(ContextCompat.getColor(this@MainActivity, R.color.tileSuper))
             }
 
-            val defaultSize = 40f
-            val size = defaultSize - ((value.length() - 1) * 4)
-
-            textSize = size
+            textSize = when (value.length()) {
+                1, 2 -> {
+                    40f
+                }
+                3 -> {
+                    30f
+                }
+                4 -> {
+                    24f
+                }
+                5 -> {
+                    18f
+                }
+                else -> {
+                    12f
+                }
+            }
 
             game_container.addView(this)
         }
@@ -270,7 +296,7 @@ class MainActivity : AppCompatActivity() {
         val x = ArrayList<Int>()
         val y = ArrayList<Int>()
 
-        for (i in 0 until grid.size){
+        for (i in 0 until grid.size) {
             x.add(i)
             y.add(i)
         }
@@ -321,7 +347,7 @@ class MainActivity : AppCompatActivity() {
         TransitionManager.beginDelayedTransition(game_container, transition)
         constraintSet.applyTo(game_container)
 
-        tilesToRemove.forEach{
+        tilesToRemove.forEach {
             game_container.removeView(it.textView)
         }
 
@@ -338,7 +364,39 @@ class MainActivity : AppCompatActivity() {
         updateScore()
 
         addRandom()
+
+        updateState()
+        saveState()
+
         logBoard()
+    }
+
+    private fun updateState() {
+        previousState = currentState
+        currentState = State(grid, moveCount, score, highScore, over, won, continuingGame, time)
+    }
+
+    private fun saveState() {
+        val file = File(filesDir, "save.dat")
+        val ois = ObjectOutputStream(FileOutputStream(file))
+        ois.writeObject(currentState)
+        ois.close()
+    }
+
+    private fun loadState(): Boolean {
+        val file = File(filesDir, "save.dat")
+        if (!file.createNewFile()) {
+            return try {
+                val ois = ObjectInputStream(FileInputStream(file))
+                val obj = ois.readObject()
+                currentState = obj as State
+                previousState = null
+                true
+            } catch (e: Exception) {
+                false
+            }
+        }
+        return false
     }
 
     private fun logBoard() {
@@ -398,17 +456,25 @@ class MainActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun newGame() {
         clearViews()
-        score = 0
 
-//        grid = Array(4) { Array(4) { 0 } }
-//        grid = arrayOf(intArrayOf(0, 0, 0, 0), intArrayOf(2, 2, 0, 4), intArrayOf(0, 0, 0, 2), intArrayOf(0, 0, 0, 2))
+        score = 0
+        moveCount = 0
+
+        over = false
+        won = false
+        continuingGame = false
+
         grid = Grid(4)
+
+        time = 0L
 
         addStartingTiles(2)
 
         updateScore()
         updateMoveCount()
-//        logBoard()
+
+        updateState()
+        saveState()
     }
 
     private fun addStartingTiles(startTiles: Int) {
@@ -423,11 +489,47 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG(this), "tile = $tile")
             tile?.let {
                 Log.d(TAG(this), "textView = ${tile.textView}")
-                Log.d(TAG(this), "index of textview = ${game_container.indexOfChild(tile.textView)}")
-                tile.textView?.let { game_container.removeView(it) } }
+                Log.d(TAG(this), "index of textView = ${game_container.indexOfChild(tile.textView)}")
+                tile.textView?.let { game_container.removeView(it) }
+            }
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
+    fun undo(view: View) {
+        previousState?.let {
+            currentState = previousState!!
+            previousState = null
+            updateToMatchState()
+        }
+                ?: if (moveCount != 0) Toast.makeText(this, "You can only undo once.", Toast.LENGTH_SHORT).show()
+
+    }
+
+    private fun updateToMatchState(updateTime: Boolean = false) {
+        grid = currentState.grid
+        moveCount = currentState.moveCount
+        score = currentState.score
+        highScore = currentState.bestScore
+        over = currentState.gameOver
+        won = currentState.won
+        continuingGame = currentState.continuingGame
+
+
+        if (updateTime) {
+            time = currentState.time
+        } else {
+            currentState = State(currentState, time)
+        }
+
+        clearViews()
+
+        grid.forEach { tile ->
+            tile?.let {
+                addAt(tile.pos, tile.value)
+            }
+        }
+    }
 }
 
 
