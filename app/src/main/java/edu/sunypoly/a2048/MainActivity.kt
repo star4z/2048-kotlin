@@ -169,9 +169,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getTargetId(p: Pos): Int {
         val gridLocIdName = "tile_${p.y}_${p.x}"
-        val gridLocId = resources.getIdentifier(gridLocIdName, "id", packageName)
-        Log.d(TAG(this), "gridLocId = $gridLocIdName ($gridLocId)")
-        return gridLocId
+        return resources.getIdentifier(gridLocIdName, "id", packageName)
     }
 
     private fun constrainToTarget(constraintSet: ConstraintSet, sourceId: Int, pos: Pos) {
@@ -230,6 +228,7 @@ class MainActivity : AppCompatActivity() {
 
                 tile?.let {
                     val positions = getMaxShift(vector, pos)
+                    Log.v(TAG(this), "max pos if merge: ${positions.first} else: ${positions.second}")
                     val next = grid[positions.second]
 
                     //Only 1 merger per row traversal
@@ -237,14 +236,15 @@ class MainActivity : AppCompatActivity() {
                         val merged = Tile(positions.second, tile.value * 2)
                         merged.mergedFrom = Pair(tile, next)
 
-                        tilesToRemove.add(next)
 
                         grid[merged.pos] = merged
                         grid[tile.pos] = null
 
                         //Converge the two tiles' positions
                         tile.updatePosition(positions.second)
+
                         tilesToRemove.add(tile)
+                        tilesToRemove.add(next)
 
                         score += merged.value
 
@@ -276,7 +276,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (vector.first == 1) x.reverse()
-        if (vector.second == 2) y.reverse()
+        if (vector.second == 1) y.reverse()
 
         return Pair(x, y)
     }
@@ -294,6 +294,7 @@ class MainActivity : AppCompatActivity() {
 
     fun onMove() {
         val transition = AutoTransition()
+        transition.duration = 100
         val constraintSet = ConstraintSet()
 
         grid.forEach { tile ->
