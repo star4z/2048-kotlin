@@ -11,10 +11,10 @@ class TileTouchListener(private val mainActivity: MainActivity) : View.OnTouchLi
 
     private val minimumRegisteredDistance = 100f
 
-    private val RIGHT = 0
-    private val UP = 1
-    private val LEFT = 2
-    private val DOWN = 3
+    private val UP = 0
+    private val RIGHT = 1
+    private val DOWN = 2
+    private val LEFT = 3
 
     /**
      * Called when a touch motionEvent is dispatched to a view. This allows listeners to
@@ -47,18 +47,18 @@ class TileTouchListener(private val mainActivity: MainActivity) : View.OnTouchLi
                     val movedSomething = if (Math.abs(dx) > Math.abs(dy)) {
                         if (dx > 0) {
                             Log.v("Input", "swiped right")
-                            swipe(RIGHT)
+                            mainActivity.move(RIGHT)
                         } else {
                             Log.v("Input", "swiped left")
-                            swipe(LEFT)
+                            mainActivity.move(LEFT)
                         }
                     } else {
                         if (dy > 0) {
                             Log.v("Input", "swiped down")
-                            swipe(DOWN)
+                            mainActivity.move(DOWN)
                         } else {
                             Log.v("Input", "swiped up")
-                            swipe(UP)
+                            mainActivity.move(UP)
                         }
                     }
                     if (movedSomething) {
@@ -73,24 +73,4 @@ class TileTouchListener(private val mainActivity: MainActivity) : View.OnTouchLi
         }
     }
 
-    private fun swipe(dir: Int): Boolean {
-        return when (dir) {
-            LEFT -> {
-                mainActivity.shiftBoard(Pair(0, -1))
-            }
-
-            RIGHT -> {
-                mainActivity.shiftBoard(Pair(0, 1))
-            }
-
-            UP -> {
-                mainActivity.shiftBoard(Pair(-1, 0))
-            }
-
-            DOWN -> {
-                mainActivity.shiftBoard(Pair(1, 0))
-            }
-            else -> false
-        }
-    }
 }

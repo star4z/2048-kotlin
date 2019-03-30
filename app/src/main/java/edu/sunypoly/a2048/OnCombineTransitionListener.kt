@@ -9,7 +9,7 @@ import android.widget.TextView
 class OnCombineTransitionListener(
         private val mainActivity: MainActivity,
         private val parent: ConstraintLayout,
-        private val position: Position,
+        private val pos: Pos,
         private val value: Int,
         private vararg val tiles: TextView
 ) : Transition.TransitionListener {
@@ -28,7 +28,7 @@ class OnCombineTransitionListener(
             Log.d(TAG(this), "Removing ")
             parent.removeView(it)
         }
-        mainActivity.addAt(position, value)
+        mainActivity.addAt(pos, value)
     }
 
     /**

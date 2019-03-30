@@ -1,5 +1,6 @@
 package edu.sunypoly.a2048
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.constraint.ConstraintSet
 import android.support.v4.content.ContextCompat
@@ -12,14 +13,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_index.*
+import java.lang.IllegalArgumentException
 
-val TAG:(Any) -> String = {it.javaClass.simpleName}
+val TAG: (Any) -> String = { it.javaClass.simpleName }
 
 class MainActivity : AppCompatActivity() {
 
-
-    private var grid = Array(4) { Array(4) { 0 } }
-    private var tileGrid = Array(4) {Array<TextView?>(4){null }}
+    private var grid = Grid(4)
+    private var lastGrid: Grid? = null
 
     private var scale = 1f
     private var margin = 0
@@ -29,6 +30,8 @@ class MainActivity : AppCompatActivity() {
     private var moveCount = 0
     private var time = 0L
 
+    private var over = false
+    private var won = false
     private var continuingGame = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +46,7 @@ class MainActivity : AppCompatActivity() {
 
         newGame()
 
+        logBoard()
         touch_receiver.setOnTouchListener(TileTouchListener(this))
     }
 
@@ -66,15 +70,11 @@ class MainActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
-    fun onMove() {
-        moveCount++
-        updateMoveCount()
-        updateScore()
-        addRandom()
-        logBoard()
-    }
 
     private fun updateScore() {
+        if (score > highScore) {
+            highScore = score
+        }
         val scoreView = findViewById<TextView>(R.id.score)
         scoreView.text = formatScore(score)
         best_score.text = formatScore(highScore)
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun updateMoveCount() {
+    private fun updateMoveCount() {
         val movesText = if (moveCount == 1) {
             "1 move"
         } else {
@@ -104,62 +104,78 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addRandom() {
-        val available = getAvailableSpaces()
+        val available = grid.availablePositions()
         val newPos = available.removeAt((0 until available.size).random())
         addAt(newPos)
     }
 
 
-    internal fun addAt(p: Position, value: Int = if ((0..9).random() < 9) 2 else 4) {
-        grid[p.r][p.c] = value
+    internal fun addAt(p: Pos, value: Int = if ((0..9).random() < 9) 2 else 4) {
+        grid[p] = Tile(p, value)
 
-        val inflater = LayoutInflater.from(this)
+        val tile = createTileTextView(value)
 
-
-        val tile = inflater.inflate(R.layout.tile_2, null) as TextView
-        tile.id = View.generateViewId()
         val id = tile.id
-
-        tileGrid[p.r][p.c] = tile
-
-        with(grid[p.r][p.c]) {
-
-            tile.text = toString()
-            if (this < 8) {
-                tile.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.brownButtonBackground))
-            } else {
-                tile.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.offWhiteText))
-            }
-
-            if (this <= 2048) {
-                val colorId = ContextCompat.getColor(this@MainActivity, resources.getIdentifier("tile$this", "color", packageName))
-                Log.d(TAG(this), "colorId = $colorId")
-                tile.background.mutate().setTint(colorId)
-            } else {
-                tile.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.tileSuper))
-            }
-
-            val defaultSize = 40f
-            val size = defaultSize - ((length() - 1) * 4)
-
-            tile.textSize = size
-
-            game_container.addView(tile)
-        }
-
-        val gridLocIdName = "tile_${p.r}_${p.c}"
-        val gridLocId = resources.getIdentifier(gridLocIdName, "id", packageName)
-        Log.d(TAG(this), "gridLocId = $gridLocIdName ($gridLocId)")
+        grid[p]?.textView = tile
 
         val constraintSet = ConstraintSet()
         with(constraintSet) {
-            constrainHeight(id, 0)
-            constrainWidth(id, 0)
-            setDimensionRatio(id, "1:1")
-
-            constrainToTarget(this, id, gridLocId)
+            applyDefaultConstraints(this, id)
+            constrainToTarget(this, id, p)
             applyTo(game_container)
         }
+    }
+
+    private fun applyDefaultConstraints(constraintSet: ConstraintSet, id: Int) {
+        constraintSet.constrainHeight(id, 0)
+        constraintSet.constrainWidth(id, 0)
+        constraintSet.setDimensionRatio(id, "1:1")
+    }
+
+    @SuppressLint("InflateParams")
+    private fun createTileTextView(value: Int): TextView {
+        val inflater = LayoutInflater.from(this)
+
+        val tile = inflater.inflate(R.layout.tile_2, null) as TextView
+        tile.id = View.generateViewId()
+
+        with(tile) {
+
+            text = value.toString()
+            if (value < 8) {
+                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.brownButtonBackground))
+            } else {
+                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.offWhiteText))
+            }
+
+            if (value <= 2048) {
+//                val colorIdString = resources.getIdentifier("tile$value", "color", packageName)
+                val colorId = ContextCompat.getColor(this@MainActivity, resources.getIdentifier("tile$value", "color", packageName))
+//                Log.d(TAG(this), "colorId = $colorId")
+                background.mutate().setTint(colorId)
+            } else {
+                setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.tileSuper))
+            }
+
+            val defaultSize = 40f
+            val size = defaultSize - ((value.length() - 1) * 4)
+
+            textSize = size
+
+            game_container.addView(this)
+        }
+        return tile
+    }
+
+    private fun getTargetId(p: Pos): Int {
+        val gridLocIdName = "tile_${p.y}_${p.x}"
+        val gridLocId = resources.getIdentifier(gridLocIdName, "id", packageName)
+        Log.d(TAG(this), "gridLocId = $gridLocIdName ($gridLocId)")
+        return gridLocId
+    }
+
+    private fun constrainToTarget(constraintSet: ConstraintSet, sourceId: Int, pos: Pos) {
+        constrainToTarget(constraintSet, sourceId, getTargetId(pos))
     }
 
     private fun constrainToTarget(constraintSet: ConstraintSet, sourceId: Int, targetId: Int) {
@@ -169,165 +185,198 @@ class MainActivity : AppCompatActivity() {
         constraintSet.connect(sourceId, ConstraintSet.BOTTOM, targetId, ConstraintSet.BOTTOM, margin)
     }
 
-    private fun getAvailableSpaces(): ArrayList<Position> {
-        val l = ArrayList<Position>()
-        for (i in grid.indices) {
-            for (j in grid[i].indices) {
-                if (grid[i][j] == 0) {
-                    l.add(Position(i, j))
-                }
-            }
+    private fun getVector(direction: Int): Pair<Int, Int> {
+        return when (direction) {
+            0 -> Pair(0, -1)// Up
+            1 -> Pair(1, 0) // Right
+            2 -> Pair(0, 1) // Down
+            3 -> Pair(-1, 0)// Left
+            else -> throw IllegalArgumentException()
         }
-
-        return l
     }
 
+    private fun prepareTiles() {
+        grid.forEach { tile ->
+            tile?.let {
+                tile.mergedFrom = null
+                tile.savePosition()
+            }
+        }
+    }
+
+    private fun moveTile(tile: Tile, pos: Pos) {
+        grid[tile.pos] = null
+        grid[pos] = tile
+        tile.updatePosition(pos)
+    }
+
+    private var tilesToRemove = ArrayList<Tile>()
 
     @Suppress("RemoveCurlyBracesFromTemplate")
-    internal fun shiftBoard(directionVector: Pair<Int, Int>): Boolean {
-        var swiped = false
+    internal fun move(direction: Int): Boolean {
+        if (isGameTerminated())
+            return false
 
-//        val positionsToUpgrade = HashMap<Position, Int>()
-        val transition = AutoTransition()
+        val vector = getVector(direction)
+        val traversals = buildTraversals(vector)
+        var moved = false
 
-        val rowIndices = if (directionVector.first > 0) grid.indices.reversed() else grid.indices
-        val constraintSet = ConstraintSet()
+        prepareTiles()
 
-        for (i in rowIndices) {
-            val colIndices = if (directionVector.second > 0) grid[i].indices.reversed() else grid.indices
+        for (i in traversals.first) {
+            for (j in traversals.second) {
+                val pos = Pos(i, j)
+                val tile = grid[pos]
 
-            for (j in colIndices) {
-                if (grid[i][j] != 0) {
-                    val shift = getMaxShift(directionVector, i, j)
-                    if (shift != 0) {
-                        val tileIdName = "numbered_tile_${i}_$j"
-                        val tileId = resources.getIdentifier(tileIdName, "id", packageName)
-                        Log.d(TAG(this), "tileId =  $tileIdName ($tileId)")
+                tile?.let {
+                    val positions = getMaxShift(vector, pos)
+                    val next = grid[positions.second]
 
-                        val newRow = i + directionVector.first * shift
-                        val newCol = j + directionVector.second * shift
+                    //Only 1 merger per row traversal
+                    if (next != null && next.value == tile.value && next.mergedFrom == null) {
+                        val merged = Tile(positions.second, tile.value * 2)
+                        merged.mergedFrom = Pair(tile, next)
 
-                        val gridIdName = "tile_${newRow}_${newCol}"
-                        val newId = resources.getIdentifier("numbered_tile_${newRow}_${newCol}", "id", packageName)
+                        tilesToRemove.add(next)
 
-                        val gridLocId = resources.getIdentifier(gridIdName, "id", packageName)
-                        Log.d(TAG(this), "gridLocId = $gridIdName ($gridLocId)")
+                        grid[merged.pos] = merged
+                        grid[tile.pos] = null
 
-                        constrainToTarget(constraintSet, tileId, gridLocId)
+                        //Converge the two tiles' positions
+                        tile.updatePosition(positions.second)
+                        tilesToRemove.add(tile)
 
+                        score += merged.value
 
-                        val tile = findViewById<TextView>(tileId)
-
-
-                        if (grid[i][j] == grid[newRow][newCol]) {
-                            grid[newRow][newCol] = grid[i][j] * 2
-
-                            score += grid[newRow][newCol]
-                            if (score > highScore) {
-                                highScore = score
-                            }
-
-//                            positionsToUpgrade[Position(newRow, newCol)] =
-                            //Remove lower values and insert new value tile
-                            val oldTile = findViewById<TextView>(newId)
-                            val transitionListener = OnCombineTransitionListener(this, game_container, Position(newRow, newCol), grid[newRow][newCol], tile, oldTile)
-                            transition.addListener(transitionListener)
-//                            game_container.removeView(tile)
-//                            game_container.removeView(oldTile)
-//                            addAt(Position(newRow, newCol), grid[newRow][newCol])
-
-                        } else {
-                            grid[newRow][newCol] = grid[i][j]
+                        //Whoo
+                        if (merged.value == 2048) {
+                            won = true
                         }
+                    } else {
+                        moveTile(tile, positions.first)
+                    }
 
-
-
-                        tile.id = newId
-
-                        grid[i][j] = 0
-                        swiped = true
+                    if (pos != tile.pos) {
+                        moved = true
                     }
                 }
             }
         }
 
+        return moved
+    }
+
+    private fun buildTraversals(vector: Pair<Int, Int>): Pair<ArrayList<Int>, ArrayList<Int>> {
+        val x = ArrayList<Int>()
+        val y = ArrayList<Int>()
+
+        for (i in 0 until grid.size){
+            x.add(i)
+            y.add(i)
+        }
+
+        if (vector.first == 1) x.reverse()
+        if (vector.second == 2) y.reverse()
+
+        return Pair(x, y)
+    }
+
+    private fun getMaxShift(vector: Pair<Int, Int>, pos: Pos): Pair<Pos, Pos> {
+        var previous: Pos
+        var p = pos
+        do {
+            previous = p
+            p = previous + vector
+        } while (grid.withinBounds(p) && grid.isPosAvailable(p))
+
+        return Pair(previous, p)
+    }
+
+    fun onMove() {
+        val transition = AutoTransition()
+        val constraintSet = ConstraintSet()
+
+        grid.forEach { tile ->
+            tile?.let {
+                if (tile.previousPos != tile.pos) {
+                    var textView = tile.textView
+                    if (tile.mergedFrom != null) {
+                        textView = createTileTextView(tile.value)
+                        applyDefaultConstraints(constraintSet, textView.id)
+                    }
+                    textView?.let { constrainToTarget(constraintSet, textView.id, tile.pos) }
+                            ?: Log.d(TAG(this), "Found a null TextView @ ${tile.pos}")
+                    tile.textView = textView
+                }
+            }
+        }
+
+        tilesToRemove.forEach { tile ->
+            Log.d(TAG(this), "Removing tile $tile with textView ${tile.textView} after moving " +
+                    "it from ${tile.previousPos} to ${tile.pos}")
+            constrainToTarget(constraintSet, tile.textView!!.id, tile.pos)
+        }
 
         TransitionManager.beginDelayedTransition(game_container, transition)
         constraintSet.applyTo(game_container)
 
-        return swiped
-    }
-
-    private fun getMaxShift(vector: Pair<Int, Int>, i: Int, j: Int): Int {
-        var shift = 0
-        var finishedShifting = false
-
-        while (((vector.first > 0 && i + vector.first * shift < 3)
-                        || (vector.first < 0 && i + vector.first * shift > 0)
-                        || (vector.second > 0 && j + vector.second * shift < 3)
-                        || (vector.second < 0 && j + vector.second * shift > 0))
-                && !finishedShifting) {
-            val rowToCheck = i + vector.first * (shift + 1)
-            val colToCheck = j + vector.second * (shift + 1)
-            when {
-                grid[rowToCheck][colToCheck] == 0 -> shift++
-                grid[rowToCheck][colToCheck] == grid[i][j] -> {
-                    shift++
-                    finishedShifting = true
-                }
-                else -> finishedShifting = true
-            }
+        tilesToRemove.forEach{
+            game_container.removeView(it.textView)
         }
-        return shift
+
+        tilesToRemove.clear()
+
+//        lastGrid = grid
+//        grid = Grid(grid)
+        if (!movesAvailable()) {
+            over = true
+        }
+
+        moveCount++
+        updateMoveCount()
+        updateScore()
+
+        addRandom()
+        logBoard()
     }
 
     private fun logBoard() {
-        var s = ""
-        grid.forEach { row -> s += "\n"; row.forEach { s += "$it " } }
-        Log.v(TAG(this), s)
+        Log.v(TAG(this), grid.toString())
     }
 
     private fun gameIsWon(): Boolean {
-        var won = false
-        grid.forEach {
-            if (it.contains(2048)) {
-                won = true
+        return grid.contains(Tile(Pos(-1, -1), 2048))
+    }
+
+    private fun movesAvailable(): Boolean {
+        return grid.arePositionsAvailable() || tileMatchesAvailable()
+    }
+
+    private fun tileMatchesAvailable(): Boolean {
+        for (i in 0 until grid.size) {
+            for (j in 0 until grid.size) {
+                val pos = Pos(i, j)
+                val tile = grid[pos]
+                tile?.let {
+                    for (direction in 0 until 4) {
+                        val vector = getVector(direction)
+                        val otherPos = pos + vector
+                        val other = grid[otherPos]
+
+                        if (other != null && other.value == tile.value) {
+                            return true
+                        }
+                    }
+                }
             }
         }
-        return won
+
+        return false
     }
 
 
-    private fun gameIsLost(): Boolean {
-        var hasPossibleMove = false
-
-        grid.forEach {
-            if (it.contains(0)) {
-                hasPossibleMove = true
-            }
-        }
-
-        if (!hasPossibleMove) {
-            for (i in 0..3) {
-                for (j in 0..2) {
-                    if (grid[i][j] == grid[i][j + 1]) {
-                        hasPossibleMove = true
-                    }
-                }
-            }
-        }
-
-        if (!hasPossibleMove) {
-            for (i in 0..2) {
-                for (j in 0..3) {
-                    if (grid[i][j] == grid[i + 1][j]) {
-                        hasPossibleMove = true
-                    }
-                }
-            }
-        }
-
-        return !hasPossibleMove
+    private fun isGameTerminated(): Boolean {
+        return over || (won && !continuingGame)
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -350,26 +399,38 @@ class MainActivity : AppCompatActivity() {
         clearViews()
         score = 0
 
-        grid = Array(4) { Array(4) { 0 } }
-        addRandom()
-        addRandom()
+//        grid = Array(4) { Array(4) { 0 } }
+//        grid = arrayOf(intArrayOf(0, 0, 0, 0), intArrayOf(2, 2, 0, 4), intArrayOf(0, 0, 0, 2), intArrayOf(0, 0, 0, 2))
+        grid = Grid(4)
+
+        addStartingTiles(2)
 
         updateScore()
         updateMoveCount()
 //        logBoard()
     }
 
-    private fun clearViews() {
-        tileGrid.forEach { row ->
-            row.forEach{view ->
-                view?.let { game_container.removeView(view) }
-            }
+    private fun addStartingTiles(startTiles: Int) {
+        repeat(startTiles) {
+            addRandom()
         }
     }
+
+    private fun clearViews() {
+        Log.d(TAG(this), "Clearing views...")
+        grid.forEach { tile ->
+            Log.d(TAG(this), "tile = $tile")
+            tile?.let {
+                Log.d(TAG(this), "textView = ${tile.textView}")
+                Log.d(TAG(this), "index of textview = ${game_container.indexOfChild(tile.textView)}")
+                tile.textView?.let { game_container.removeView(it) } }
+        }
+    }
+
 }
 
-data class Position(var r: Int, var c: Int)
 
+//returns the number of digits
 fun Int.length(): Int {
     var copy = this
     var count = 0
