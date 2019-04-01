@@ -49,8 +49,6 @@ class MainActivity : AppCompatActivity() {
         window.navigationBarColor = tan
         scale = resources.displayMetrics.density
         margin = tile_0_0.paddingTop
-
-
     }
 
     override fun onResume() {
@@ -103,6 +101,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateMoveCount() {
+        Log.d(TAG(this), "moveCount = $moveCount")
         val movesText = if (moveCount == 1) {
             "1 move"
         } else {
@@ -236,7 +235,6 @@ class MainActivity : AppCompatActivity() {
 
     private var tilesToRemove = ArrayList<Tile>()
 
-    @Suppress("RemoveCurlyBracesFromTemplate")
     internal fun move(direction: Int): Boolean {
         if (isGameTerminated())
             return false
@@ -254,7 +252,7 @@ class MainActivity : AppCompatActivity() {
 
                 tile?.let {
                     val positions = getMaxShift(vector, pos)
-                    Log.v(TAG(this), "max pos if merge: ${positions.first} else: ${positions.second}")
+//                    Log.v(TAG(this), "max pos if merge: ${positions.first} else: ${positions.second}")
                     val next = grid[positions.second]
 
                     //Only 1 merger per row traversal
@@ -403,9 +401,6 @@ class MainActivity : AppCompatActivity() {
         Log.v(TAG(this), grid.toString())
     }
 
-    private fun gameIsWon(): Boolean {
-        return grid.contains(Tile(Pos(-1, -1), 2048))
-    }
 
     private fun movesAvailable(): Boolean {
         return grid.arePositionsAvailable() || tileMatchesAvailable()
@@ -486,10 +481,10 @@ class MainActivity : AppCompatActivity() {
     private fun clearViews() {
         Log.d(TAG(this), "Clearing views...")
         grid.forEach { tile ->
-            Log.d(TAG(this), "tile = $tile")
+//            Log.d(TAG(this), "tile = $tile")
             tile?.let {
-                Log.d(TAG(this), "textView = ${tile.textView}")
-                Log.d(TAG(this), "index of textView = ${game_container.indexOfChild(tile.textView)}")
+//                Log.d(TAG(this), "textView = ${tile.textView}")
+//                Log.d(TAG(this), "index of textView = ${game_container.indexOfChild(tile.textView)}")
                 tile.textView?.let { game_container.removeView(it) }
             }
         }
