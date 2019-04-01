@@ -1,11 +1,10 @@
 package edu.sunypoly.a2048
 
 import android.annotation.SuppressLint
-import android.net.http.SslCertificate.saveState
+import android.app.AlertDialog
 import android.os.Bundle
 import android.support.constraint.ConstraintSet
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.transition.AutoTransition
 import android.transition.TransitionManager
@@ -16,8 +15,6 @@ import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_index.*
 import java.io.*
-import java.lang.Exception
-import java.lang.IllegalArgumentException
 
 val TAG: (Any) -> String = { it.javaClass.simpleName }
 
@@ -62,7 +59,6 @@ class MainActivity : AppCompatActivity() {
 
         logBoard()
         touch_receiver.setOnTouchListener(TileTouchListener(this))
-
         hideSystemUI()
     }
 
@@ -518,6 +514,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         clearViews()
+        updateMoveCount()
 
         grid.forEach { tile ->
             tile?.let {
