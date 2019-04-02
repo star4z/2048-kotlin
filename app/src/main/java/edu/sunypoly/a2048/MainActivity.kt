@@ -21,6 +21,7 @@ import java.util.*
 
 val TAG: (Any) -> String = { it.javaClass.simpleName }
 
+@Suppress("UNUSED_PARAMETER")
 class MainActivity : AppCompatActivity() {
 
     private var grid = Grid(4)
@@ -38,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     private var previouslyElapsedTime = 0L
 
     private var timer: Timer? = null
-    lateinit var timerTask: TimerTask
+    private lateinit var timerTask: TimerTask
 
     val handler = Handler()
 
@@ -71,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         logBoard()
         touch_receiver.setOnTouchListener(TileTouchListener(this))
         hideSystemUI()
+
     }
 
     override fun onPause() {
@@ -236,7 +238,7 @@ class MainActivity : AppCompatActivity() {
 
             text = value.toString()
             if (value < 8) {
-                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.brownButtonBackground))
+                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.textBrown))
             } else {
                 setTextColor(ContextCompat.getColor(this@MainActivity, R.color.offWhiteText))
             }
@@ -352,7 +354,7 @@ class MainActivity : AppCompatActivity() {
 
                         score += merged.value
 
-                        //Whoo
+                        //Win condition
                         if (merged.value == 2048) {
                             won = true
                         }
@@ -431,17 +433,16 @@ class MainActivity : AppCompatActivity() {
 
         tilesToRemove.clear()
 
-//        lastGrid = grid
-//        grid = Grid(grid)
-        if (!movesAvailable()) {
-            over = true
-        }
-
         moveCount++
         updateMoveCount()
         updateScore()
 
         addRandom()
+
+        Log.d(TAG(this), "movesAvailable=${movesAvailable()}")
+        if (!movesAvailable()) {
+            over = true
+        }
 
         updateState()
         saveState()

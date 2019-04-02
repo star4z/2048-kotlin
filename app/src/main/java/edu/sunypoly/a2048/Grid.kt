@@ -8,10 +8,6 @@ class Grid(val size: Int): Iterable<Tile?>, Serializable {
 
     private var tileGrid = Array(size) { Array<Tile?>(size) { null } }
 
-    constructor(grid: Grid) : this(grid.size) {
-        tileGrid = tileGrid.copyOf()
-    }
-
     /**
      * Returns an iterator over the elements of this object.
      */
@@ -21,7 +17,7 @@ class Grid(val size: Int): Iterable<Tile?>, Serializable {
 
     inner class GridIterator: Iterator<Tile?>{
 
-        var pos = Pos(0, 0)
+        private var pos = Pos(0, 0)
 
         /**
          * Returns `true` if the iteration has more elements.
@@ -39,18 +35,6 @@ class Grid(val size: Int): Iterable<Tile?>, Serializable {
             return tileGrid[oldPos]
         }
 
-    }
-
-    fun positions(): ArrayList<Pos>{
-        val positions = ArrayList<Pos>()
-
-        for (i in 0..size){
-            for (j in 0..size){
-                positions.add(Pos(i, j))
-            }
-        }
-
-        return positions
     }
 
     operator fun set(p: Pos, t: Tile?) {
@@ -89,7 +73,7 @@ class Grid(val size: Int): Iterable<Tile?>, Serializable {
         return !isPosOccupied(pos)
     }
 
-    fun isPosOccupied(pos: Pos): Boolean {
+    private fun isPosOccupied(pos: Pos): Boolean {
         return this[pos] != null
     }
 
