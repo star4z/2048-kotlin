@@ -73,6 +73,13 @@ class MainActivity : AppCompatActivity() {
         hideSystemUI()
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        updateState()
+        saveState()
+    }
+
     private fun startTimer() {
         if (timer != null){
             stopTimer()
