@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     private var highScore = 0
     private var moveCount = 0
     private var startTime = 0L
+    private var previouslyElapsedTime = 0L
 
     private var timer: Timer? = null
     lateinit var timerTask: TimerTask
@@ -77,7 +78,6 @@ class MainActivity : AppCompatActivity() {
             stopTimer()
         }
 
-
         timer = Timer()
 
         initializeTimerTask()
@@ -85,14 +85,14 @@ class MainActivity : AppCompatActivity() {
         timer?.schedule(timerTask, 0, 1000)
     }
 
-    fun stopTimer() {
+    private fun stopTimer() {
         timer?.let {
             timer!!.cancel()
             timer = null
         }
     }
 
-    fun initializeTimerTask() {
+    private fun initializeTimerTask() {
         timerTask = object : TimerTask() {
             /**
              * The action to be performed by this timer task.
@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             override fun run() {
                 handler.post {
                     val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
-                    val strDate = dateFormat.format(System.currentTimeMillis() - startTime)
+                    val strDate = dateFormat.format(System.currentTimeMillis() - startTime + previouslyElapsedTime)
 
                     timer_text_view.text = strDate
                 }
@@ -164,7 +164,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    internal fun addAt(p: Pos, value: Int = if ((0..9).random() < 9) 2 else 4) {
+    private fun addAt(p: Pos, value: Int = if ((0..9).random() < 9) 2 else 4) {
         grid[p] = Tile(p, value)
 
         val tile = createTileTextView(value)
@@ -413,7 +413,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateState() {
         previousState = currentState
-        currentState = State(grid, moveCount, score, highScore, over, won, continuingGame, startTime)
+        val elapsedTime = previouslyElapsedTime + System.currentTimeMillis() - startTime
+        currentState = State(grid, moveCount, score, highScore, over, won, continuingGame, elapsedTime)
     }
 
     private fun saveState() {
@@ -503,6 +504,7 @@ class MainActivity : AppCompatActivity() {
 
         grid = Grid(4)
 
+        previouslyElapsedTime = 0L
         startTime = System.currentTimeMillis()
 
         addStartingTiles(2)
@@ -513,7 +515,7 @@ class MainActivity : AppCompatActivity() {
         updateState()
         saveState()
 
-        timerTask.run()
+        startTimer()
     }
 
     private fun addStartingTiles(startTiles: Int) {
@@ -556,10 +558,12 @@ class MainActivity : AppCompatActivity() {
 
 
         if (updateTime) {
-            startTime = currentState.time
+            previouslyElapsedTime = currentState.time
         } else {
-            currentState = State(currentState, startTime)
+            currentState = State(currentState, previouslyElapsedTime)
         }
+
+        startTime = System.currentTimeMillis()
 
         clearViews()
         updateMoveCount()
