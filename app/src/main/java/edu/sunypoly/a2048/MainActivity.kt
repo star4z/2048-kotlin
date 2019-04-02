@@ -73,6 +73,8 @@ class MainActivity : AppCompatActivity() {
         touch_receiver.setOnTouchListener(TileTouchListener(this))
         hideSystemUI()
 
+        updateMoveCount()
+        updateScore()
     }
 
     override fun onPause() {
