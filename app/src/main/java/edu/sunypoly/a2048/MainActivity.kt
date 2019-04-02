@@ -160,8 +160,40 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun promptContinue(): Boolean {
-        return true
+    private fun promptContinue() {
+        showMessage("You win!")
+        message_container.setBackgroundColor(ContextCompat.getColor(this, R.color.transparentYellow))
+        keep_going_button.visibility = View.VISIBLE
+
+    }
+
+    private fun promptGameOver() {
+        showMessage("Game over!")
+        message_container.setBackgroundColor(ContextCompat.getColor(this, R.color.transparentBrown))
+        keep_going_button.visibility = View.GONE
+    }
+
+    private fun showMessage(str: String) {
+        message_container.visibility = View.VISIBLE
+        message.text = str
+    }
+
+    fun tryAgain(view: View){
+        dismissMessage()
+        newGame()
+    }
+
+    fun keepGoing(view: View){
+        dismissMessage()
+        continuingGame = true
+    }
+
+    fun share(view: View){
+
+    }
+
+    private fun dismissMessage(){
+        message_container.visibility = View.GONE
     }
 
     private fun addRandom() {
@@ -210,9 +242,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             if (value <= 2048) {
-//                val colorIdString = resources.getIdentifier("tile$value", "color", packageName)
                 val colorId = ContextCompat.getColor(this@MainActivity, resources.getIdentifier("tile$value", "color", packageName))
-//                Log.d(TAG(this), "colorId = $colorId")
                 background.mutate().setTint(colorId)
             } else {
                 background.mutate().setTint(ContextCompat.getColor(this@MainActivity, R.color.tileSuper))
@@ -231,6 +261,7 @@ class MainActivity : AppCompatActivity() {
                 5 -> {
                     18f
                 }
+                //if you get bigger than this, congrats, you broke it and you definitely cheated
                 else -> {
                     12f
                 }
@@ -416,6 +447,14 @@ class MainActivity : AppCompatActivity() {
         saveState()
 
         logBoard()
+
+
+        if (won && !continuingGame) {
+            promptContinue()
+        }
+        if (over){
+            promptGameOver()
+        }
     }
 
     private fun updateState() {

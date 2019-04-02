@@ -13,9 +13,11 @@
     <color name="brownButtonBackground">#ff3c3a33</color>
     <color name="yellowButtonBackground">#EDCC5F</color>
 
-    <color name="transparentBrown">#A4938144</color>
+    <color name="transparentBrown">#77EEE4DA</color>
+    <color name="transparentYellow">#77edc22e</color>
 
     <color name="tileTextLight">#fff9f6f2</color>
+    <color name="textBrown">#766E65</color>
 
     <color name="tile2">#ffeee4da</color>
     <color name="tile4">#ffede0c8</color>

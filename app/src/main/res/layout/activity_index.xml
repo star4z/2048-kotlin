@@ -167,6 +167,7 @@
         app:layout_constraintTop_toBottomOf="@id/title" />
 
     <android.support.constraint.ConstraintLayout
+        tools:ignore="ContentDescription"
         android:id="@+id/game_container"
         style="@style/gameContainer"
         android:layout_width="match_parent"
@@ -175,27 +176,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/main_instructions">
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/message_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:elevation="100dp"
-            android:visibility="gone">
 
-            <TextView
-                android:id="@+id/message"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/transparentBrown"
-                android:elevation="4dp"
-                android:gravity="center"
-                android:textAlignment="center"
-                android:textColor="@color/offWhiteText"
-                android:textSize="50sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Game over!" />
-        </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/touch_receiver"
@@ -256,7 +237,8 @@
             style="@style/tile"
             app:layout_constraintEnd_toStartOf="@id/guideline_vertical_left"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
 
         <ImageView
@@ -364,6 +346,73 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/guideline_vertical_right"
             app:layout_constraintTop_toBottomOf="@id/tile_2_0" />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/message_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="100dp"
+            android:background="@color/transparentYellow"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="4dp"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:textColor="@color/textBrown"
+                android:textStyle="bold"
+                android:textSize="50sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:text="Game over!" />
+
+            <Button
+                android:id="@+id/keep_going_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toStartOf="@id/try_again_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/message"
+                android:padding="16dp"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:text="@string/keep_going"
+                android:onClick="keepGoing"/>
+
+            <Button
+                android:id="@+id/try_again_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toStartOf="@id/share_button"
+                app:layout_constraintStart_toEndOf="@id/keep_going_button"
+                app:layout_constraintTop_toBottomOf="@+id/message"
+                android:padding="16dp"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:text="@string/try_again"
+                android:onClick="tryAgain"/>
+
+            <Button
+                android:id="@+id/share_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/try_again_button"
+                app:layout_constraintTop_toBottomOf="@+id/message"
+                android:padding="16dp"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:text="@string/share"
+                android:onClick="share"/>
+        </android.support.constraint.ConstraintLayout>
 
     </android.support.constraint.ConstraintLayout>
 

@@ -10,4 +10,7 @@
     <string name="best">BEST</string>
 
     <string name="default_score">0</string>
+    <string name="keep_going">Keep going</string>
+    <string name="try_again">Try again</string>
+    <string name="share">Share</string>
 </resources>
