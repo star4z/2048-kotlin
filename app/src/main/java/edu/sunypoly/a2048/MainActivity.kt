@@ -3,6 +3,7 @@ package edu.sunypoly.a2048
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
+import android.os.Handler
 import android.support.constraint.ConstraintSet
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
@@ -15,6 +16,8 @@ import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_index.*
 import java.io.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 val TAG: (Any) -> String = { it.javaClass.simpleName }
 
@@ -31,7 +34,12 @@ class MainActivity : AppCompatActivity() {
     private var score = 0
     private var highScore = 0
     private var moveCount = 0
-    private var time = 0L
+    private var startTime = 0L
+
+    private var timer: Timer? = null
+    lateinit var timerTask: TimerTask
+
+    val handler = Handler()
 
     private var over = false
     private var won = false
@@ -57,9 +65,47 @@ class MainActivity : AppCompatActivity() {
             newGame()
         }
 
+        startTimer()
+
         logBoard()
         touch_receiver.setOnTouchListener(TileTouchListener(this))
         hideSystemUI()
+    }
+
+    private fun startTimer() {
+        if (timer != null){
+            stopTimer()
+        }
+
+
+        timer = Timer()
+
+        initializeTimerTask()
+
+        timer?.schedule(timerTask, 0, 1000)
+    }
+
+    fun stopTimer() {
+        timer?.let {
+            timer!!.cancel()
+            timer = null
+        }
+    }
+
+    fun initializeTimerTask() {
+        timerTask = object : TimerTask() {
+            /**
+             * The action to be performed by this timer task.
+             */
+            override fun run() {
+                handler.post {
+                    val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
+                    val strDate = dateFormat.format(System.currentTimeMillis() - startTime)
+
+                    timer_text_view.text = strDate
+                }
+            }
+        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -367,7 +413,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateState() {
         previousState = currentState
-        currentState = State(grid, moveCount, score, highScore, over, won, continuingGame, time)
+        currentState = State(grid, moveCount, score, highScore, over, won, continuingGame, startTime)
     }
 
     private fun saveState() {
@@ -457,7 +503,7 @@ class MainActivity : AppCompatActivity() {
 
         grid = Grid(4)
 
-        time = 0L
+        startTime = System.currentTimeMillis()
 
         addStartingTiles(2)
 
@@ -466,6 +512,8 @@ class MainActivity : AppCompatActivity() {
 
         updateState()
         saveState()
+
+        timerTask.run()
     }
 
     private fun addStartingTiles(startTiles: Int) {
@@ -477,9 +525,9 @@ class MainActivity : AppCompatActivity() {
     private fun clearViews() {
         Log.d(TAG(this), "Clearing views...")
         grid.forEach { tile ->
-//            Log.d(TAG(this), "tile = $tile")
+            //            Log.d(TAG(this), "tile = $tile")
             tile?.let {
-//                Log.d(TAG(this), "textView = ${tile.textView}")
+                //                Log.d(TAG(this), "textView = ${tile.textView}")
 //                Log.d(TAG(this), "index of textView = ${game_container.indexOfChild(tile.textView)}")
                 tile.textView?.let { game_container.removeView(it) }
             }
@@ -508,9 +556,9 @@ class MainActivity : AppCompatActivity() {
 
 
         if (updateTime) {
-            time = currentState.time
+            startTime = currentState.time
         } else {
-            currentState = State(currentState, time)
+            currentState = State(currentState, startTime)
         }
 
         clearViews()
