@@ -61,6 +61,8 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
+        clearViews()
+
         if (loadState()) {
             updateToMatchState(true)
         } else {
@@ -183,7 +185,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun tryAgain(view: View){
-        dismissMessage()
         newGame()
     }
 
@@ -233,7 +234,7 @@ class MainActivity : AppCompatActivity() {
     private fun createTileTextView(value: Int): TextView {
         val inflater = LayoutInflater.from(this)
 
-        val tile = inflater.inflate(R.layout.tile_2, null) as TextView
+        val tile = inflater.inflate(R.layout.tile, null) as TextView
         tile.id = View.generateViewId()
 
         with(tile) {
@@ -542,6 +543,8 @@ class MainActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun newGame() {
+        dismissMessage()
+
         clearViews()
 
         score = 0
@@ -587,6 +590,7 @@ class MainActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun undo(view: View) {
+        Log.d(TAG(this), previousState?.grid.toString())
         previousState?.let {
             currentState = previousState!!
             previousState = null

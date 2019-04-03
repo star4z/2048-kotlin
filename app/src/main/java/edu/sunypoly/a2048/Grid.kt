@@ -8,6 +8,14 @@ class Grid(val size: Int): Iterable<Tile?>, Serializable {
 
     private var tileGrid = Array(size) { Array<Tile?>(size) { null } }
 
+    constructor(other: Grid): this(other.size){
+        tileGrid = other.tileGrid.clone()
+    }
+
+    fun copy(): Grid{
+        return Grid(this)
+    }
+
     /**
      * Returns an iterator over the elements of this object.
      */

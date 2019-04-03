@@ -230,7 +230,7 @@
             app:layout_constraintGuide_percent="0.75" />
 
 
-        <!--<include layout="@layout/tile_2"/>-->
+        <!--<include layout="@layout/tile"/>-->
 
         <ImageView
             android:id="@+id/tile_0_0"
