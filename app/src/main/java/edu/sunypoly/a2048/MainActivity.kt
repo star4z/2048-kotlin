@@ -324,6 +324,8 @@ class MainActivity : AppCompatActivity() {
         if (isGameTerminated())
             return false
 
+        previousState = State(currentState, previouslyElapsedTime)
+
         val vector = getVector(direction)
         val traversals = buildTraversals(vector)
         var moved = false
@@ -462,7 +464,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateState() {
-        previousState = currentState
         val elapsedTime = previouslyElapsedTime + System.currentTimeMillis() - startTime
         currentState = State(grid, moveCount, score, highScore, over, won, continuingGame, elapsedTime)
     }
