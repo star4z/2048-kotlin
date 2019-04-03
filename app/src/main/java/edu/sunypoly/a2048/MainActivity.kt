@@ -612,11 +612,11 @@ class MainActivity : AppCompatActivity() {
 
         if (updateTime) {
             previouslyElapsedTime = currentState.time
+            startTime = System.currentTimeMillis()
         } else {
             currentState = State(currentState, previouslyElapsedTime)
         }
 
-        startTime = System.currentTimeMillis()
 
         clearViews()
         updateMoveCount()
