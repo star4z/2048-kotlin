@@ -438,16 +438,16 @@
         android:textColor="@color/tanTile"
         tools:text="0:00" />
 
-    <TextView
+    <ImageView
         android:id="@+id/signature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="14dp"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:paddingBottom="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:textColor="@color/tanBackground"
-        tools:text="What's my name, b" />
+        android:src="@drawable/signature"/>
 
 
 </android.support.constraint.ConstraintLayout>
