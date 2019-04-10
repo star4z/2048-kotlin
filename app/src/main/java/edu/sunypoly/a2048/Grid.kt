@@ -3,13 +3,13 @@ package edu.sunypoly.a2048
 import java.io.Serializable
 import java.util.*
 
-class Grid(val size: Int): Iterable<Tile?>, Serializable {
+data class Grid(val size: Int): Iterable<Tile?>, Serializable {
 
 
     private var tileGrid = Array(size) { Array<Tile?>(size) { null } }
 
     constructor(other: Grid): this(other.size){
-        tileGrid = other.tileGrid.clone()
+        tileGrid = Array(size) { i -> Array(size){ j -> other.tileGrid[i][j]?.copy()}}
     }
 
     fun copy(): Grid{

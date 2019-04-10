@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity() {
     private var currentState = State(grid)
     private var previousState: State? = null
 
+    private var tilesToRemove = ArrayList<Tile>()
+
     private var scale = 1f
     private var margin = 0
 
@@ -52,7 +54,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_index)
 
         val tan = ContextCompat.getColor(this, R.color.colorPrimary)
-//        window.statusBarColor = tan
         window.navigationBarColor = tan
         scale = resources.displayMetrics.density
         margin = tile_0_0.paddingTop
@@ -156,7 +157,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateMoveCount() {
-        Log.d(TAG(this), "moveCount = $moveCount")
+//        Log.d(TAG(this), "moveCount = $moveCount")
         val movesText = if (moveCount == 1) {
             "1 move"
         } else {
@@ -318,13 +319,16 @@ class MainActivity : AppCompatActivity() {
         tile.updatePosition(pos)
     }
 
-    private var tilesToRemove = ArrayList<Tile>()
 
     internal fun move(direction: Int): Boolean {
         if (isGameTerminated())
             return false
 
-        previousState = State(currentState, previouslyElapsedTime)
+        Log.d(TAG(this), "currentState = \n${currentState.grid}")
+
+        previousState = currentState.copy()
+
+        grid = currentState.grid
 
         val vector = getVector(direction)
         val traversals = buildTraversals(vector)
@@ -424,8 +428,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         tilesToRemove.forEach { tile ->
-            Log.d(TAG(this), "Removing tile $tile with textView ${tile.textView} after moving " +
-                    "it from ${tile.previousPos} to ${tile.pos}")
+//            Log.d(TAG(this), "Removing tile $tile with textView ${tile.textView} after moving " +
+//                    "it from ${tile.previousPos} to ${tile.pos}")
             constrainToTarget(constraintSet, tile.textView!!.id, tile.pos)
         }
 
@@ -449,8 +453,13 @@ class MainActivity : AppCompatActivity() {
             over = true
         }
 
+        Log.d(TAG(this), "previous grid before update = \n${previousState!!.grid}")
+
         updateState()
         saveState()
+
+        Log.d(TAG(this), "previous grid after update = \n${previousState!!.grid}")
+
 
         logBoard()
 
@@ -492,7 +501,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun logBoard() {
-        Log.v(TAG(this), grid.toString())
+        Log.v(TAG(this), "grid = \n $grid")
     }
 
 
@@ -546,6 +555,15 @@ class MainActivity : AppCompatActivity() {
     fun newGame() {
         dismissMessage()
 
+        grid.forEach {tile ->
+            tile?.let{
+                tilesToRemove.add(tile)
+            }
+        }
+        tilesToRemove.forEach {
+            game_container.removeView(it.textView)
+        }
+
         clearViews()
 
         score = 0
@@ -556,6 +574,8 @@ class MainActivity : AppCompatActivity() {
         continuingGame = false
 
         grid = Grid(4)
+
+        previousState = null
 
         previouslyElapsedTime = 0L
         startTime = System.currentTimeMillis()
@@ -591,10 +611,19 @@ class MainActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun undo(view: View) {
-        Log.d(TAG(this), previousState?.grid.toString())
+        Log.d(TAG(this), "previous grid = \n${previousState?.grid}")
         previousState?.let {
+            grid.forEach {tile ->
+                tile?.let{
+                    tilesToRemove.add(tile)
+                }
+            }
             currentState = previousState!!
             previousState = null
+
+            tilesToRemove.forEach {
+                game_container.removeView(it.textView)
+            }
             updateToMatchState()
         }
                 ?: if (moveCount != 0) Toast.makeText(this, "You can only undo once.", Toast.LENGTH_SHORT).show()
@@ -602,7 +631,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateToMatchState(updateTime: Boolean = false) {
-        grid = currentState.grid
         moveCount = currentState.moveCount
         score = currentState.score
         highScore = currentState.bestScore
@@ -618,6 +646,7 @@ class MainActivity : AppCompatActivity() {
             currentState = State(currentState, previouslyElapsedTime)
         }
 
+        grid = currentState.grid
 
         clearViews()
         updateMoveCount()
