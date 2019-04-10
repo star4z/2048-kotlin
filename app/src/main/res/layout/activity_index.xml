@@ -447,7 +447,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:textColor="@color/tanBackground"
-        android:src="@drawable/signature"/>
+        android:src="@drawable/signature"
+        android:contentDescription="@string/made_by_benjamin_phillips" />
 
 
 </android.support.constraint.ConstraintLayout>
