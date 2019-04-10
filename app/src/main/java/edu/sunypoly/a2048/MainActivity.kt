@@ -650,6 +650,7 @@ class MainActivity : AppCompatActivity() {
 
         clearViews()
         updateMoveCount()
+        updateScore()
 
         grid.forEach { tile ->
             tile?.let {
