@@ -7,7 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-    
+
     <style name="gameContainer">
         <!--<item name="android:padding">15dp</item>-->
         <item name="android:background">@drawable/grid_background</item>
@@ -23,6 +23,38 @@
         <item name="layout_constraintDimensionRatio">1</item>
         <item name="android:padding">8dp</item>
         <item name="android:src">@drawable/grid_cell</item>
+    </style>
+
+    <style name="optionsButtonTile">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">42dp</item>
+        <item name="android:layout_marginEnd">42dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/offWhiteText</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="statistics">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/textBrown</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="statistics.item">
+        <item name="android:layout_margin">8dp</item>
+    </style>
+
+    <style name="statistics.header">
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
     </style>
 
 </resources>

@@ -2,6 +2,7 @@ package edu.sunypoly.a2048
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.constraint.ConstraintSet
@@ -14,9 +15,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import edu.sunypoly.a2048.StateHandler.continuingGame
+import edu.sunypoly.a2048.StateHandler.currentState
+import edu.sunypoly.a2048.StateHandler.grid
+import edu.sunypoly.a2048.StateHandler.moveCount
+import edu.sunypoly.a2048.StateHandler.over
+import edu.sunypoly.a2048.StateHandler.previousState
+import edu.sunypoly.a2048.StateHandler.startTimer
+import edu.sunypoly.a2048.StateHandler.updateState
+import edu.sunypoly.a2048.StateHandler.updateToMatchState
+import edu.sunypoly.a2048.StateHandler.won
 import kotlinx.android.synthetic.main.activity_index.*
-import java.io.*
-import java.text.SimpleDateFormat
 import java.util.*
 
 val TAG: (Any) -> String = { it.javaClass.simpleName }
@@ -24,37 +33,25 @@ val TAG: (Any) -> String = { it.javaClass.simpleName }
 @Suppress("UNUSED_PARAMETER")
 class MainActivity : AppCompatActivity() {
 
-    private var grid = Grid(4)
-
-    private var currentState = State(grid)
-    private var previousState: State? = null
+//    private var grid = Grid(4)
+//
+//    private var currentState = State(grid)
+//    private var previousState: State? = null
 
     private var tilesToRemove = ArrayList<Tile>()
 
     private var scale = 1f
     private var margin = 0
 
-    private var score = 0
-    private var highScore = 0
-    private var moveCount = 0
-    private var startTime = 0L
-    private var previouslyElapsedTime = 0L
-
-    private var timer: Timer? = null
-    private lateinit var timerTask: TimerTask
 
     val handler = Handler()
 
-    private var over = false
-    private var won = false
-    private var continuingGame = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_index)
 
-        val tan = ContextCompat.getColor(this, R.color.colorPrimary)
-        window.navigationBarColor = tan
+
         scale = resources.displayMetrics.density
         margin = tile_0_0.paddingTop
     }
@@ -64,62 +61,28 @@ class MainActivity : AppCompatActivity() {
 
         clearViews()
 
-        if (loadState()) {
-            updateToMatchState(true)
+        if (StateHandler.loadState(this)) {
+            updateToMatchState(true, this::onUpdateState)
         } else {
             newGame()
         }
 
-        startTimer()
+        startTimer(handler, timer_text_view)
 
         logBoard()
         touch_receiver.setOnTouchListener(TileTouchListener(this))
+        val tan = ContextCompat.getColor(this, R.color.colorPrimary)
+        window.navigationBarColor = tan
         hideSystemUI()
 
-        updateMoveCount()
-        updateScore()
+        StateHandler.updateDataValues { updateDisplayedData() }
     }
 
     override fun onPause() {
         super.onPause()
 
         updateState()
-        saveState()
-    }
-
-    private fun startTimer() {
-        if (timer != null){
-            stopTimer()
-        }
-
-        timer = Timer()
-
-        initializeTimerTask()
-
-        timer?.schedule(timerTask, 0, 1000)
-    }
-
-    private fun stopTimer() {
-        timer?.let {
-            timer!!.cancel()
-            timer = null
-        }
-    }
-
-    private fun initializeTimerTask() {
-        timerTask = object : TimerTask() {
-            /**
-             * The action to be performed by this timer task.
-             */
-            override fun run() {
-                handler.post {
-                    val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
-                    val strDate = dateFormat.format(System.currentTimeMillis() - startTime + previouslyElapsedTime)
-
-                    timer_text_view.text = strDate
-                }
-            }
-        }
+        StateHandler.saveState(this)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -137,14 +100,15 @@ class MainActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
-
-    private fun updateScore() {
-        if (score > highScore) {
-            highScore = score
+    private fun updateDisplayedData(){
+        score.text = formatScore(StateHandler.score)
+        best_score.text = formatScore(StateHandler.highScore)
+        val movesText = if (moveCount == 1) {
+            "1 move"
+        } else {
+            "$moveCount moves"
         }
-        val scoreView = findViewById<TextView>(R.id.score)
-        scoreView.text = formatScore(score)
-        best_score.text = formatScore(highScore)
+        move_count_text_view.text = movesText
     }
 
     private fun formatScore(s: Int): String {
@@ -154,16 +118,6 @@ class MainActivity : AppCompatActivity() {
             s >= 1_000 -> "${(s / 100).toFloat() / 10}k"
             else -> s.toString()
         }
-    }
-
-    private fun updateMoveCount() {
-//        Log.d(TAG(this), "moveCount = $moveCount")
-        val movesText = if (moveCount == 1) {
-            "1 move"
-        } else {
-            "$moveCount moves"
-        }
-        move_count_text_view.text = movesText
     }
 
 
@@ -361,7 +315,7 @@ class MainActivity : AppCompatActivity() {
                         tilesToRemove.add(tile)
                         tilesToRemove.add(next)
 
-                        score += merged.value
+                        StateHandler.score += merged.value
 
                         //Win condition
                         if (merged.value == 2048) {
@@ -443,8 +397,7 @@ class MainActivity : AppCompatActivity() {
         tilesToRemove.clear()
 
         moveCount++
-        updateMoveCount()
-        updateScore()
+        StateHandler.updateDataValues(this::updateDisplayedData)
 
         addRandom()
 
@@ -456,7 +409,7 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG(this), "previous grid before update = \n${previousState!!.grid}")
 
         updateState()
-        saveState()
+        StateHandler.saveState(this)
 
         Log.d(TAG(this), "previous grid after update = \n${previousState!!.grid}")
 
@@ -472,33 +425,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateState() {
-        val elapsedTime = previouslyElapsedTime + System.currentTimeMillis() - startTime
-        currentState = State(grid, moveCount, score, highScore, over, won, continuingGame, elapsedTime)
-    }
 
-    private fun saveState() {
-        val file = File(filesDir, "save.dat")
-        val ois = ObjectOutputStream(FileOutputStream(file))
-        ois.writeObject(currentState)
-        ois.close()
-    }
-
-    private fun loadState(): Boolean {
-        val file = File(filesDir, "save.dat")
-        if (!file.createNewFile()) {
-            return try {
-                val ois = ObjectInputStream(FileInputStream(file))
-                val obj = ois.readObject()
-                currentState = obj as State
-                previousState = null
-                true
-            } catch (e: Exception) {
-                false
-            }
-        }
-        return false
-    }
 
     private fun logBoard() {
         Log.v(TAG(this), "grid = \n $grid")
@@ -551,8 +478,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun newGame() {
+    private fun newGame() {
         dismissMessage()
 
         grid.forEach {tile ->
@@ -566,29 +492,16 @@ class MainActivity : AppCompatActivity() {
 
         clearViews()
 
-        score = 0
-        moveCount = 0
+        StateHandler.newGame {
+            addStartingTiles(2)
 
-        over = false
-        won = false
-        continuingGame = false
+            StateHandler.updateDataValues(this::updateDisplayedData)
 
-        grid = Grid(4)
+            updateState()
+            StateHandler.saveState(this)
 
-        previousState = null
-
-        previouslyElapsedTime = 0L
-        startTime = System.currentTimeMillis()
-
-        addStartingTiles(2)
-
-        updateScore()
-        updateMoveCount()
-
-        updateState()
-        saveState()
-
-        startTimer()
+            startTimer(handler, timer_text_view)
+        }
     }
 
     private fun addStartingTiles(startTiles: Int) {
@@ -624,39 +537,25 @@ class MainActivity : AppCompatActivity() {
             tilesToRemove.forEach {
                 game_container.removeView(it.textView)
             }
-            updateToMatchState()
+            StateHandler.updateToMatchState(listener = this::onUpdateState)
         }
                 ?: if (moveCount != 0) Toast.makeText(this, "You can only undo once.", Toast.LENGTH_SHORT).show()
 
     }
 
-    private fun updateToMatchState(updateTime: Boolean = false) {
-        moveCount = currentState.moveCount
-        score = currentState.score
-        highScore = currentState.bestScore
-        over = currentState.gameOver
-        won = currentState.won
-        continuingGame = currentState.continuingGame
-
-
-        if (updateTime) {
-            previouslyElapsedTime = currentState.time
-            startTime = System.currentTimeMillis()
-        } else {
-            currentState = State(currentState, previouslyElapsedTime)
-        }
-
-        grid = currentState.grid
-
+    private fun onUpdateState() {
         clearViews()
-        updateMoveCount()
-        updateScore()
+        StateHandler.updateDataValues { updateDisplayedData() }
 
         grid.forEach { tile ->
             tile?.let {
                 addAt(tile.pos, tile.value)
             }
         }
+    }
+
+    fun openMenu(view: View){
+        startActivity(Intent(this, MenuActivity::class.java))
     }
 }
 

@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".StatisticsActivity"
+    android:background="@color/offWhiteBackground">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="32dp"
+        android:paddingBottom="32dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <ImageView
+            android:id="@+id/back_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="@string/back"
+            android:src="@drawable/ic_chevron_left_24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="back"/>
+
+        <TextView
+            android:id="@+id/stats_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="Classic Stats"
+            android:textColor="@color/textBrown"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/back_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/back_button" />
+
+        <TextView
+            android:id="@+id/info_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="info"
+            android:textColor="@color/tanBackground"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/stats_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/back_button" />
+
+        <TextView
+            android:id="@+id/all_play"
+            style="@style/statistics.header"
+            android:text="All Play"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/back_button" />
+
+        <TextView
+            android:id="@+id/best_score_text"
+            style="@style/statistics.item"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/all_play"
+            android:text="Best Score"/>
+
+        <TextView
+            android:id="@+id/best_score_val"
+            style="@style/statistics.item"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/all_play"
+            android:text="0"/>
+
+        <TextView
+            android:id="@+id/total_score_text"
+            style="@style/statistics.item"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/best_score_text"
+            android:text="Total Score"/>
+
+        <TextView
+            android:id="@+id/total_score_val"
+            style="@style/statistics.item"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/best_score_text"
+            android:text="0"/>
+
+        <TextView
+            android:id="@+id/top_tile_text"
+            style="@style/statistics.item"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/total_score_text"
+            android:text="Top Tile"/>
+
+        <TextView
+            android:id="@+id/top_tile_val"
+            style="@style/statistics.item"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/total_score_text"
+            android:text="2"/>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/_512_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/top_tile_text" >
+
+            <TextView
+                android:id="@+id/group_header"
+                style="@style/statistics.header"
+                android:text="512"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/grt"
+                style="@style/statistics.item"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/group_header"
+                android:text="Games Reached"/>
+
+            <TextView
+                android:id="@+id/grv"
+                style="@style/statistics.item"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/group_header"
+                android:text="0"/>
+
+            <TextView
+                android:id="@+id/stt"
+                style="@style/statistics.item"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/grt"
+                android:text="Shortest Time"/>
+
+            <TextView
+                android:id="@+id/stv"
+                style="@style/statistics.item"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/grt"
+                android:text="0"/>
+
+            <TextView
+                android:id="@+id/fmt"
+                style="@style/statistics.item"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/stt"
+                android:text="Fewest Moves"/>
+
+            <TextView
+                android:id="@+id/fmv"
+                style="@style/statistics.item"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/stt"
+                android:text="0"/>
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/_1024_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/_512_layout" >
+
+            <TextView
+                android:id="@id/group_header"
+                style="@style/statistics.header"
+                android:text="1024"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@id/grt"
+                style="@style/statistics.item"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/group_header"
+                android:text="Games Reached"/>
+
+            <TextView
+                android:id="@id/grv"
+                style="@style/statistics.item"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/group_header"
+                android:text="0"/>
+
+            <TextView
+                android:id="@id/stt"
+                style="@style/statistics.item"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/grt"
+                android:text="Shortest Time"/>
+
+            <TextView
+                android:id="@id/stv"
+                style="@style/statistics.item"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/grt"
+                android:text="0"/>
+
+            <TextView
+                android:id="@id/fmt"
+                style="@style/statistics.item"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/stt"
+                android:text="Fewest Moves"/>
+
+            <TextView
+                android:id="@id/fmv"
+                style="@style/statistics.item"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/stt"
+                android:text="0"/>
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/_2048_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/_1024_layout" >
+
+            <TextView
+                android:id="@id/group_header"
+                style="@style/statistics.header"
+                android:text="2048"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@id/grt"
+                style="@style/statistics.item"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/group_header"
+                android:text="Games Reached"/>
+
+            <TextView
+                android:id="@id/grv"
+                style="@style/statistics.item"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/group_header"
+                android:text="0"/>
+
+            <TextView
+                android:id="@id/stt"
+                style="@style/statistics.item"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/grt"
+                android:text="Shortest Time"/>
+
+            <TextView
+                android:id="@id/stv"
+                style="@style/statistics.item"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/grt"
+                android:text="0"/>
+
+            <TextView
+                android:id="@id/fmt"
+                style="@style/statistics.item"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/stt"
+                android:text="Fewest Moves"/>
+
+            <TextView
+                android:id="@id/fmv"
+                style="@style/statistics.item"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/stt"
+                android:text="0"/>
+        </android.support.constraint.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/clarification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/_2048_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"
+            android:textColor="@color/textBrown"
+            android:text="Stats do not include games in progress."/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/clarification"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="2dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/textBrown"
+            android:text="Reset Stats"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>

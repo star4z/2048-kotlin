@@ -12,6 +12,8 @@
     <color name="redButtonBackground">#f65e3d</color>
     <color name="brownButtonBackground">#ff3c3a33</color>
     <color name="yellowButtonBackground">#EDCC5F</color>
+    <color name="blueButtonBackground">#4071ca</color>
+    <color name="tanButtonBackground">#A49381</color>
 
     <color name="transparentBrown">#77EEE4DA</color>
     <color name="transparentYellow">#77edc22e</color>

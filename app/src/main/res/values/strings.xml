@@ -14,4 +14,13 @@
     <string name="try_again">Try again</string>
     <string name="share">Share</string>
     <string name="made_by_benjamin_phillips">made by Benjamin Phillips</string>
+    <string name="classic_play">Classic play</string>
+    <string name="time_trial">Time trial</string>
+    <string name="statistics">Statistics</string>
+    <string name="sounds_on">Sounds ON</string>
+    <string name="undo_on">Undo ON</string>
+    <string name="swipe_anywhere_off">Swipe Anywhere OFF</string>
+    <string name="how_to_play">How to play</string>
+    <string name="about_2048">About 2048</string>
+    <string name="back">back</string>
 </resources>

@@ -25,7 +25,8 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@id/new_game_button"
         app:layout_constraintStart_toStartOf="@id/game_container"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="openMenu"/>
 
 
     <TextView
@@ -75,7 +76,7 @@
         android:layout_marginStart="6dp"
         android:layout_marginTop="6dp"
         android:layout_marginEnd="6dp"
-        android:background="@drawable/option_button_background"
+        android:background="@drawable/bg_button_red"
         android:onClick="promptNewGame"
         android:padding="4dp"
         android:text="@string/new_game"
@@ -136,7 +137,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
         android:layout_marginTop="6dp"
-        android:background="@drawable/option_button_background"
+        android:background="@drawable/bg_button_red"
         android:padding="4dp"
         android:text="@string/undo"
         android:textAlignment="center"
