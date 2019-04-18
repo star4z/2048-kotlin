@@ -57,4 +57,24 @@
         <item name="android:layout_marginEnd">8dp</item>
     </style>
 
+    <style name="boring">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/textBrown</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:lineSpacingExtra">5sp</item>
+    </style>
+
+    <style name="boring.text">
+        <item name="android:layout_margin">8dp</item>
+    </style>
+
+    <style name="boring.head">
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+    </style>
+
 </resources>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StatisticsActivity"
+    tools:context=".HowToPlayActivity"
     android:background="@color/offWhiteBackground">
 
     <android.support.constraint.ConstraintLayout
@@ -24,7 +24,8 @@
             android:src="@drawable/ic_chevron_left_24dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:onClick="back"/>
+            android:onClick="back"
+            tools:ignore="OnClick" />
 
         <TextView
             android:id="@+id/stats_title"
@@ -50,9 +51,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/back_button"
-            style="@style/statistics.item"
-            android:lineSpacingExtra="5sp"
-            android:textSize="20sp"
+            style="@style/boring.text"
             android:text="@string/statistics_info_text"/>
 
 

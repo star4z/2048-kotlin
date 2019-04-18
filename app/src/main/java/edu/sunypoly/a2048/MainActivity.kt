@@ -564,6 +564,11 @@ class MainActivity : AppCompatActivity() {
     fun openMenu(view: View) {
         startActivity(Intent(this, MenuActivity::class.java))
     }
+
+
+    fun viewStats(view: View) {
+        startActivity(Intent(this, StatisticsActivity::class.java))
+    }
 }
 
 

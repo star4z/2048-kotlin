@@ -38,7 +38,8 @@
         app:layout_constraintBottom_toTopOf="@id/new_game_button"
         app:layout_constraintEnd_toEndOf="@+id/new_game_button"
         app:layout_constraintStart_toStartOf="@+id/new_game_button"
-        app:layout_constraintTop_toTopOf="@id/title" />
+        app:layout_constraintTop_toTopOf="@id/title"
+        android:onClick="viewStats"/>
 
     <TextView
         android:id="@+id/score_title"
@@ -99,7 +100,8 @@
         app:layout_constraintBottom_toTopOf="@id/undo_button"
         app:layout_constraintEnd_toEndOf="@+id/undo_button"
         app:layout_constraintStart_toStartOf="@+id/undo_button"
-        app:layout_constraintTop_toTopOf="@id/title"/>
+        app:layout_constraintTop_toTopOf="@id/title"
+        android:onClick="viewStats"/>
 
     <TextView
         android:id="@+id/best_score_title"

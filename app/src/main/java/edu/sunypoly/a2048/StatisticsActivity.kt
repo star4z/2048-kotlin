@@ -4,15 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintSet
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_statistics.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class StatisticsActivity : AppCompatActivity() {
+class StatisticsActivity : BoringActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,30 +44,10 @@ class StatisticsActivity : AppCompatActivity() {
             constraintSet.applyTo(parentView)
         }
 
-        val tan = ContextCompat.getColor(this, R.color.colorPrimary)
-        window.navigationBarColor = tan
 
-        hideSystemUI()
     }
 
-    override fun onResume() {
-        super.onResume()
 
-        val tan = ContextCompat.getColor(this, R.color.colorPrimary)
-        window.navigationBarColor = tan
-
-        hideSystemUI()
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        hideSystemUI()
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun back(view: View) {
-        finish()
-    }
 /*
     @Suppress("UNUSED_PARAMETER")
     fun reset(view: View) {
@@ -87,6 +65,7 @@ class StatisticsActivity : AppCompatActivity() {
         }.create().show()
     }*/
 
+    @Suppress("UNUSED_PARAMETER")
     fun info(view: View) {
         startActivity(Intent(this, InfoActivity::class.java))
     }
