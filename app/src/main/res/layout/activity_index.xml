@@ -23,7 +23,7 @@
         android:textSize="36sp"
         android:textStyle="bold"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@id/new_game_button"
+        app:layout_constraintEnd_toStartOf="@id/score_box"
         app:layout_constraintStart_toStartOf="@id/game_container"
         app:layout_constraintTop_toTopOf="parent"
         android:onClick="openMenu"/>
@@ -33,13 +33,15 @@
         android:id="@+id/score_box"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
         android:layout_marginBottom="4dp"
         android:background="@drawable/score_background"
+        android:onClick="viewStats"
         app:layout_constraintBottom_toTopOf="@id/new_game_button"
-        app:layout_constraintEnd_toEndOf="@+id/new_game_button"
-        app:layout_constraintStart_toStartOf="@+id/new_game_button"
-        app:layout_constraintTop_toTopOf="@id/title"
-        android:onClick="viewStats"/>
+        app:layout_constraintEnd_toStartOf="@id/best_score_box"
+        app:layout_constraintStart_toEndOf="@+id/title"
+        app:layout_constraintTop_toTopOf="@id/title" />
 
     <TextView
         android:id="@+id/score_title"
@@ -74,7 +76,6 @@
         android:id="@+id/new_game_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
         android:layout_marginTop="6dp"
         android:layout_marginEnd="6dp"
         android:background="@drawable/bg_button_red"
@@ -87,7 +88,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/main_instructions"
         app:layout_constraintEnd_toStartOf="@id/undo_button"
-        app:layout_constraintStart_toEndOf="@id/title"
+        app:layout_constraintStart_toStartOf="@+id/score_box"
         app:layout_constraintTop_toBottomOf="@id/score_box" />
 
 
@@ -95,11 +96,12 @@
         android:id="@+id/best_score_box"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
         android:background="@drawable/score_background"
-        app:layout_constraintBottom_toTopOf="@id/undo_button"
-        app:layout_constraintEnd_toEndOf="@+id/undo_button"
-        app:layout_constraintStart_toStartOf="@+id/undo_button"
+        app:layout_constraintBottom_toBottomOf="@id/score_box"
+        app:layout_constraintEnd_toEndOf="@+id/game_container"
+        app:layout_constraintStart_toEndOf="@id/score_box"
         app:layout_constraintTop_toTopOf="@id/title"
         android:onClick="viewStats"/>
 
@@ -121,24 +123,25 @@
         android:id="@+id/best_score"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/best_score_title"
-        app:layout_constraintBottom_toBottomOf="@id/best_score_box"
-        app:layout_constraintEnd_toEndOf="@id/best_score_box"
-        app:layout_constraintStart_toStartOf="@id/best_score_box"
-        android:gravity="top"
         android:paddingBottom="8dp"
+        android:text="@string/default_score"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:text="@string/default_score"/>
+        app:layout_constraintTop_toBottomOf="@+id/best_score_title"
+        app:layout_constraintBottom_toBottomOf="@id/best_score_box"
+        app:layout_constraintEnd_toEndOf="@+id/best_score_box"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/best_score_box" />
 
     <TextView
         android:id="@+id/undo_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/bg_button_red"
         android:padding="4dp"
         android:text="@string/undo"

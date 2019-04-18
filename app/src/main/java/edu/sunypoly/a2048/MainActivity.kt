@@ -3,8 +3,10 @@ package edu.sunypoly.a2048
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
+import android.preference.PreferenceManager
 import android.support.constraint.ConstraintSet
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.ContextCompat.startActivity
@@ -47,9 +49,13 @@ class MainActivity : AppCompatActivity() {
     private var textBrown = 0
     private var textOffWhite = 0
 
+    lateinit var prefs: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_index)
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
         GlobalScope.launch{
             Stats.init(this@MainActivity)
@@ -82,6 +88,12 @@ class MainActivity : AppCompatActivity() {
         hideSystemUI()
 
         StateHandler.updateDataValues(this::updateDisplayedData)
+
+        if (prefs[UNDO_ENABLED, true]) {
+            undo_button.visibility = View.VISIBLE
+        } else {
+            undo_button.visibility = View.GONE
+        }
     }
 
     override fun onPause() {
@@ -147,7 +159,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun share(view: View) {
-
+        TODO()
     }
 
     private fun dismissMessage() {
@@ -361,7 +373,7 @@ class MainActivity : AppCompatActivity() {
         return Pair(previous, p)
     }
 
-    fun onMove() {
+    private fun onMove() {
         val transition = AutoTransition()
         transition.duration = 100
         val constraintSet = ConstraintSet()

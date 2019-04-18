@@ -9,9 +9,9 @@ import android.support.v4.content.ContextCompat
 import android.view.View
 import kotlinx.android.synthetic.main.activity_menu.*
 
-val SOUND_ENABLED = "pref_sound_enabled"
-val UNDO_ENABLED = "pref_undo_enabled"
-val SWIPE_ANYWHERE_ENABLED = "pref_swipe_anywhere_enabled"
+const val SOUND_ENABLED = "pref_sound_enabled"
+const val UNDO_ENABLED = "pref_undo_enabled"
+const val SWIPE_ANYWHERE_ENABLED = "pref_swipe_anywhere_enabled"
 
 class MenuActivity : AppCompatActivity() {
 
@@ -22,6 +22,11 @@ class MenuActivity : AppCompatActivity() {
         setContentView(R.layout.activity_menu)
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
+
+        sounds_button.text = if (prefs[SOUND_ENABLED, true]) "Sounds ON" else "Sounds OFF"
+        undo_enable_button.text = if (prefs[UNDO_ENABLED, true]) "Undo ON" else "Undo OFF"
+        swipe_anywhere_button.text = if (prefs[SWIPE_ANYWHERE_ENABLED, false]) "Swipe Anywhere ON" else "Swipe Anywhere OFF"
+
     }
 
     override fun onResume() {
@@ -43,7 +48,7 @@ class MenuActivity : AppCompatActivity() {
     }
 
     fun onTimeTrialClicked(view: View) {
-
+        TODO()
     }
 
     fun onStatisticsClicked(view: View) {
@@ -59,13 +64,13 @@ class MenuActivity : AppCompatActivity() {
     fun onUndoClicked(view: View) {
         val u = !prefs[UNDO_ENABLED, true]
         prefs[UNDO_ENABLED] = u
-        sounds_button.text = if (u) "Undo ON" else "Undo OFF"
+        undo_enable_button.text = if (u) "Undo ON" else "Undo OFF"
     }
 
     fun onSwipeAnywhereClicked(view: View) {
         val s = !prefs[SWIPE_ANYWHERE_ENABLED, false]
         prefs[SWIPE_ANYWHERE_ENABLED] = s
-        sounds_button.text = if (s) "Sounds ON" else "Sounds OFF"
+        swipe_anywhere_button.text = if (s) "Swipe Anywhere ON" else "Swipe Anywhere OFF"
     }
 
     fun onHowToPlayClicked(view: View) {
@@ -73,7 +78,7 @@ class MenuActivity : AppCompatActivity() {
     }
 
     fun onAboutClicked(view: View) {
-
+        TODO()
     }
 }
 
