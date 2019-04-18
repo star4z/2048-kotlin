@@ -1,5 +1,6 @@
 package edu.sunypoly.a2048
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintSet
@@ -33,7 +34,7 @@ class StatisticsActivity : AppCompatActivity() {
                 constraintSet.connect(layout.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
                 layout.findViewById<TextView>(R.id.group_header).text = it.key.toString()
                 layout.findViewById<TextView>(R.id.grv).text = it.value.gamesReached.toString()
-                val formatter = SimpleDateFormat("hh:mm:ss", Locale.getDefault())
+                val formatter = SimpleDateFormat("mm:ss", Locale.getDefault())
                 layout.findViewById<TextView>(R.id.stv).text = formatter.format(it.value.shortestTime)
                 layout.findViewById<TextView>(R.id.fmv).text = it.value.fewestMoves.toString()
 
@@ -51,14 +52,18 @@ class StatisticsActivity : AppCompatActivity() {
         hideSystemUI()
     }
 
-    private fun hideSystemUI() {
-        // Enables regular immersive mode.
-        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN)
+    override fun onResume() {
+        super.onResume()
+
+        val tan = ContextCompat.getColor(this, R.color.colorPrimary)
+        window.navigationBarColor = tan
+
+        hideSystemUI()
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        hideSystemUI()
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -81,4 +86,8 @@ class StatisticsActivity : AppCompatActivity() {
             setNegativeButton("No", null)
         }.create().show()
     }*/
+
+    fun info(view: View) {
+        startActivity(Intent(this, InfoActivity::class.java))
+    }
 }

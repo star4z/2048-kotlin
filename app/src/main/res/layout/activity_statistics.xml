@@ -33,7 +33,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:text="Classic Stats"
+            android:text="@string/classic_stats"
             android:textColor="@color/textBrown"
             android:textSize="30sp"
             android:textStyle="bold"
@@ -49,19 +49,20 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:text="info"
+            android:text="@string/info"
             android:textColor="@color/tanBackground"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/stats_title"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/back_button" />
+            app:layout_constraintTop_toTopOf="@+id/back_button"
+            android:onClick="info"/>
 
         <TextView
             android:id="@+id/all_play"
             style="@style/statistics.header"
             android:layout_marginTop="8dp"
-            android:text="All Play"
+            android:text="@string/all_play"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/back_button" />
 
@@ -70,34 +71,34 @@
             style="@style/statistics.item"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/all_play"
-            android:text="Best Score"/>
+            android:text="@string/best_score"/>
 
         <TextView
             android:id="@+id/best_score_val"
             style="@style/statistics.item"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/all_play"
-            android:text="0"/>
+            android:text="@string/default_score"/>
 
         <TextView
             android:id="@+id/total_score_text"
             style="@style/statistics.item"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/best_score_text"
-            android:text="Total Score"/>
+            android:text="@string/total_score"/>
 
         <TextView
             android:id="@+id/total_score_val"
             style="@style/statistics.item"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/best_score_text"
-            android:text="0"/>
+            android:text="@string/default_score"/>
 
         <TextView
             android:id="@+id/top_tile_text"
             style="@style/statistics.item"
             android:layout_height="25dp"
-            android:text="Top Tile"
+            android:text="@string/top_tile"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/total_score_text" />
 
@@ -106,7 +107,7 @@
             style="@style/statistics.item"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/total_score_text"
-            android:text="2"/>
+            android:text="@string/default_score"/>
 
 
     </android.support.constraint.ConstraintLayout>

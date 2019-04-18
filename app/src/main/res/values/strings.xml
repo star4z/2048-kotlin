@@ -23,4 +23,22 @@
     <string name="how_to_play">How to play</string>
     <string name="about_2048">About 2048</string>
     <string name="back">back</string>
+    <string name="statistics_info_text">All play statistics are cumulative across all games played.
+        They include:\n\nBest Score - Your highest score from any game. \n\nTotal Score - Your total
+        cumulative score across all completed games. \n\nTop Tile - The highest value tile that you
+        have reached. \n\nAdditional statistics are revealed as higher value tiles are unlocked
+        beginning with 512: \n\nGames Reached - Total games for which you reached this tile. (Note,
+        reaching the same tile value multiple times within a single game only counts as one.) \n\n
+        Shortest Time - Your shortest time to reaching a tile.\n\nFewest Moves - Your shortest moves
+        to reaching a tile.</string>
+    <string name="statistics_info">Statistics Info</string>
+    <string name="classic_stats">Classic Stats</string>
+    <string name="all_play">All Play</string>
+    <string name="best_score">Best Score</string>
+    <string name="total_score">Total Score</string>
+    <string name="top_tile">Top Tile</string>
+    <string name="games_reached">Games Reached</string>
+    <string name="fewest_moves">Fewest Moves</string>
+    <string name="shortest_time">Shortest Time</string>
+    <string name="info">info</string>
 </resources>
