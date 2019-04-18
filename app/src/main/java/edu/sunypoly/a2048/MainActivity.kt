@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.constraint.ConstraintSet
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.app.AppCompatActivity
 import android.transition.AutoTransition
 import android.transition.TransitionManager
@@ -21,11 +22,13 @@ import edu.sunypoly.a2048.StateHandler.grid
 import edu.sunypoly.a2048.StateHandler.moveCount
 import edu.sunypoly.a2048.StateHandler.over
 import edu.sunypoly.a2048.StateHandler.previousState
-import edu.sunypoly.a2048.StateHandler.startTimer
 import edu.sunypoly.a2048.StateHandler.updateState
 import edu.sunypoly.a2048.StateHandler.updateToMatchState
 import edu.sunypoly.a2048.StateHandler.won
+import edu.sunypoly.a2048.TimerHandler.startTimer
 import kotlinx.android.synthetic.main.activity_index.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 val TAG: (Any) -> String = { it.javaClass.simpleName }
@@ -33,24 +36,27 @@ val TAG: (Any) -> String = { it.javaClass.simpleName }
 @Suppress("UNUSED_PARAMETER")
 class MainActivity : AppCompatActivity() {
 
-//    private var grid = Grid(4)
-//
-//    private var currentState = State(grid)
-//    private var previousState: State? = null
-
     private var tilesToRemove = ArrayList<Tile>()
 
     private var scale = 1f
     private var margin = 0
 
+    private val handler = Handler()
 
-    val handler = Handler()
 
+    private var textBrown = 0
+    private var textOffWhite = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_index)
 
+        GlobalScope.launch{
+            Stats.init(this@MainActivity)
+        }
+
+        textBrown = ContextCompat.getColor(this, R.color.textBrown)
+        textOffWhite = ContextCompat.getColor(this, R.color.offWhiteText)
 
         scale = resources.displayMetrics.density
         margin = tile_0_0.paddingTop
@@ -75,7 +81,7 @@ class MainActivity : AppCompatActivity() {
         window.navigationBarColor = tan
         hideSystemUI()
 
-        StateHandler.updateDataValues { updateDisplayedData() }
+        StateHandler.updateDataValues(this::updateDisplayedData)
     }
 
     override fun onPause() {
@@ -100,9 +106,9 @@ class MainActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
-    private fun updateDisplayedData(){
-        score.text = formatScore(StateHandler.score)
-        best_score.text = formatScore(StateHandler.highScore)
+    private fun updateDisplayedData(score: Int, highScore: Int) {
+        score_view.text = formatScore(score)
+        best_score.text = formatScore(highScore)
         val movesText = if (moveCount == 1) {
             "1 move"
         } else {
@@ -139,20 +145,20 @@ class MainActivity : AppCompatActivity() {
         message.text = str
     }
 
-    fun tryAgain(view: View){
+    fun tryAgain(view: View) {
         newGame()
     }
 
-    fun keepGoing(view: View){
+    fun keepGoing(view: View) {
         dismissMessage()
         continuingGame = true
     }
 
-    fun share(view: View){
+    fun share(view: View) {
 
     }
 
-    private fun dismissMessage(){
+    private fun dismissMessage() {
         message_container.visibility = View.GONE
     }
 
@@ -196,9 +202,9 @@ class MainActivity : AppCompatActivity() {
 
             text = value.toString()
             if (value < 8) {
-                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.textBrown))
+                setTextColor(textBrown)
             } else {
-                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.offWhiteText))
+                setTextColor(textOffWhite)
             }
 
             if (value <= 2048) {
@@ -274,11 +280,11 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    internal fun move(direction: Int): Boolean {
+    internal fun move(direction: Int) {
         if (isGameTerminated())
-            return false
+            return
 
-        Log.d(TAG(this), "currentState = \n${currentState.grid}")
+//        Log.d(TAG(this), "currentState = \n${currentState.grid}")
 
         previousState = currentState.copy()
 
@@ -300,7 +306,7 @@ class MainActivity : AppCompatActivity() {
 //                    Log.v(TAG(this), "max pos if merge: ${positions.first} else: ${positions.second}")
                     val next = grid[positions.second]
 
-                    //Only 1 merger per row traversal
+                    //Merge tiles; only 1 merger per row traversal
                     if (next != null && next.value == tile.value && next.mergedFrom == null) {
                         val merged = Tile(positions.second, tile.value * 2)
                         merged.mergedFrom = Pair(tile, next)
@@ -332,7 +338,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        return moved
+        if (moved) {
+            onMove()
+        }
     }
 
     private fun buildTraversals(vector: Pair<Int, Int>): Pair<ArrayList<Int>, ArrayList<Int>> {
@@ -382,7 +390,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         tilesToRemove.forEach { tile ->
-//            Log.d(TAG(this), "Removing tile $tile with textView ${tile.textView} after moving " +
+            //            Log.d(TAG(this), "Removing tile $tile with textView ${tile.textView} after moving " +
 //                    "it from ${tile.previousPos} to ${tile.pos}")
             constrainToTarget(constraintSet, tile.textView!!.id, tile.pos)
         }
@@ -401,30 +409,26 @@ class MainActivity : AppCompatActivity() {
 
         addRandom()
 
-        Log.d(TAG(this), "movesAvailable=${movesAvailable()}")
+//        Log.d(TAG(this), "movesAvailable=${movesAvailable()}")
         if (!movesAvailable()) {
             over = true
         }
 
-        Log.d(TAG(this), "previous grid before update = \n${previousState!!.grid}")
+//        Log.d(TAG(this), "previous grid before update = \n${previousState!!.grid}")
 
         updateState()
         StateHandler.saveState(this)
 
-        Log.d(TAG(this), "previous grid after update = \n${previousState!!.grid}")
+//        Log.d(TAG(this), "previous grid after update = \n${previousState!!.grid}")
 
-
-        logBoard()
-
+//        logBoard()
 
         if (won && !continuingGame) {
             promptContinue()
-        }
-        if (over){
+        } else if (over) {
             promptGameOver()
         }
     }
-
 
 
     private fun logBoard() {
@@ -481,14 +485,16 @@ class MainActivity : AppCompatActivity() {
     private fun newGame() {
         dismissMessage()
 
-        grid.forEach {tile ->
-            tile?.let{
+        grid.forEach { tile ->
+            tile?.let {
                 tilesToRemove.add(tile)
             }
         }
         tilesToRemove.forEach {
             game_container.removeView(it.textView)
         }
+
+        tilesToRemove.clear()
 
         clearViews()
 
@@ -524,10 +530,17 @@ class MainActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun undo(view: View) {
-        Log.d(TAG(this), "previous grid = \n${previousState?.grid}")
         previousState?.let {
-            grid.forEach {tile ->
-                tile?.let{
+            //Revert gamesReached count if user just got there
+            val maxTile = currentState.grid.maxVal()
+            if (maxTile != previousState?.grid?.maxVal()){
+                val tileStats = Stats.tileStats[currentState.grid.maxVal()]
+                tileStats?.let{
+                    tileStats.gamesReached--
+                }
+            }
+            grid.forEach { tile ->
+                tile?.let {
                     tilesToRemove.add(tile)
                 }
             }
@@ -537,6 +550,8 @@ class MainActivity : AppCompatActivity() {
             tilesToRemove.forEach {
                 game_container.removeView(it.textView)
             }
+            tilesToRemove.clear()
+
             StateHandler.updateToMatchState(listener = this::onUpdateState)
         }
                 ?: if (moveCount != 0) Toast.makeText(this, "You can only undo once.", Toast.LENGTH_SHORT).show()
@@ -545,7 +560,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun onUpdateState() {
         clearViews()
-        StateHandler.updateDataValues { updateDisplayedData() }
+        StateHandler.updateDataValues(this::updateDisplayedData)
 
         grid.forEach { tile ->
             tile?.let {
@@ -554,7 +569,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun openMenu(view: View){
+    fun openMenu(view: View) {
         startActivity(Intent(this, MenuActivity::class.java))
     }
 }

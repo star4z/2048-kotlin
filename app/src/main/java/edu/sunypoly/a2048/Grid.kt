@@ -85,21 +85,12 @@ data class Grid(val size: Int): Iterable<Tile?>, Serializable {
         return this[pos] != null
     }
 
-
     fun withinBounds(pos: Pos): Boolean {
         return pos.x in 0 until size && pos.y in 0 until size
     }
 
-    override fun toString(): String {
-        var s = ""
-        for (j in 0 until size){
-            for (i in 0 until size){
-                s += "${tileGrid[i][j]} "
-            }
-            s += "\n"
-        }
-//        tileGrid.forEach { row -> s += "\n"; row.forEach { s += "$it " } }
-        return  s
+    fun maxVal(): Int{
+        return maxBy { it?.value ?: 0 }!!.value
     }
 
 }

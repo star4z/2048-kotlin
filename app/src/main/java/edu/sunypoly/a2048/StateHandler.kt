@@ -1,13 +1,7 @@
 package edu.sunypoly.a2048
 
 import android.content.Context
-import android.os.Handler
-import android.widget.TextView
-import edu.sunypoly.a2048.TimerHandler.timer
-import edu.sunypoly.a2048.TimerHandler.timerTask
 import java.io.*
-import java.text.SimpleDateFormat
-import java.util.*
 
 object StateHandler {
     var grid = Grid(4)
@@ -19,6 +13,8 @@ object StateHandler {
     var moveCount = 0
     var startTime = 0L
     var previouslyElapsedTime = 0L
+
+    var previousScore = 0
 
     var over = false
     var won = false
@@ -54,8 +50,7 @@ object StateHandler {
 
     fun newGame(listener: () -> Unit){
 
-
-
+        previousScore = 0
         score = 0
         moveCount = 0
 
@@ -96,46 +91,45 @@ object StateHandler {
         listener()
     }
 
-    fun updateDataValues(listener: () -> Unit) {
+    fun updateDataValues(listener: (Int, Int) -> Unit) {
+        Stats.totalScore += score - previousScore
+        previousScore = score
+
         if (score > highScore) {
             highScore = score
         }
 
-        listener()
-    }
+        Stats.bestScore = highScore
 
-    fun startTimer(handler: Handler, textView: TextView) {
-        if (timer != null) {
-            stopTimer()
-        }
+        val currentMax = grid.maxVal()
+        val time = System.currentTimeMillis() - startTime + previouslyElapsedTime
 
-        timer = Timer()
+        if (currentMax > Stats.topTile) {
+            Stats.topTile = currentMax
 
-        initializeTimerTask(handler, textView)
 
-        timer?.schedule(timerTask, 0, 1000)
-    }
-
-    fun stopTimer() {
-        timer?.let {
-            timer!!.cancel()
-            timer = null
-        }
-    }
-
-    private fun initializeTimerTask(handler: Handler, textView: TextView) {
-        timerTask = object : TimerTask() {
-            /**
-             * The action to be performed by this timer task.
-             */
-            override fun run() {
-                handler.post {
-                    val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
-                    val strDate = dateFormat.format(System.currentTimeMillis() - startTime + previouslyElapsedTime)
-
-                    textView.text = strDate
-                }
+            if (currentMax >= 512) {
+                Stats.tileStats[currentMax] = Stats.TileStats( 1, time, moveCount)
             }
         }
+
+        if (Stats.tileStats.containsKey(currentMax)) {
+            val stats = Stats.tileStats[currentMax]
+
+            stats?.let {
+                stats.gamesReached++
+                if (time < stats.shortestTime) {
+                    stats.shortestTime = time
+                }
+                if (moveCount < stats.fewestMoves) {
+                    stats.fewestMoves = moveCount
+                }
+            }
+
+        }
+
+        listener(score, highScore)
     }
+
+
 }

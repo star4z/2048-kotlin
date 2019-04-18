@@ -61,9 +61,9 @@ class TileTouchListener(private val mainActivity: MainActivity) : View.OnTouchLi
                             mainActivity.move(UP)
                         }
                     }
-                    if (movedSomething) {
-                        mainActivity.onMove()
-                    }
+//                    if (movedSomething) {
+//                        mainActivity.onMove()
+//                    }
 
                     swipedAlready = true
                 }

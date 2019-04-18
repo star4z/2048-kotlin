@@ -55,7 +55,7 @@
         app:layout_constraintTop_toTopOf="@id/score_box" />
 
     <TextView
-        android:id="@+id/score"
+        android:id="@+id/score_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/score_title"
@@ -449,7 +449,8 @@
         app:layout_constraintStart_toStartOf="parent"
         android:textColor="@color/tanBackground"
         android:src="@drawable/signature"
-        android:contentDescription="@string/made_by_benjamin_phillips" />
+        android:contentDescription="@string/made_by_benjamin_phillips"
+        android:visibility="gone"/>
 
 
 </android.support.constraint.ConstraintLayout>

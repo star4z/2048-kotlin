@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/group_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/top_tile_text" >
+
+    <TextView
+        android:id="@+id/group_header"
+        style="@style/statistics.header"
+        android:text="512"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/grt"
+        style="@style/statistics.item"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/group_header"
+        android:text="Games Reached"/>
+
+    <TextView
+        android:id="@+id/grv"
+        style="@style/statistics.item"
+        android:text="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/group_header" />
+
+    <TextView
+        android:id="@+id/stt"
+        style="@style/statistics.item"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/grt"
+        android:text="Shortest Time"/>
+
+    <TextView
+        android:id="@+id/stv"
+        style="@style/statistics.item"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/grt"
+        android:text="0"/>
+
+    <TextView
+        android:id="@+id/fmt"
+        style="@style/statistics.item"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stt"
+        android:text="Fewest Moves"/>
+
+    <TextView
+        android:id="@+id/fmv"
+        style="@style/statistics.item"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stt"
+        android:text="0"/>
+</android.support.constraint.ConstraintLayout>
