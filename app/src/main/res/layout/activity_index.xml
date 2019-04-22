@@ -457,5 +457,16 @@
         android:contentDescription="@string/made_by_benjamin_phillips"
         android:visibility="gone"/>
 
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="160dp"
+        android:text="Button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="share"/>
+
 
 </android.support.constraint.ConstraintLayout>

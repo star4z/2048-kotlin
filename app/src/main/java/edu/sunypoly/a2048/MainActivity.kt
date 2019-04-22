@@ -1,15 +1,20 @@
 package edu.sunypoly.a2048
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.preference.PreferenceManager
 import android.support.constraint.ConstraintSet
+import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.app.AppCompatActivity
 import android.transition.AutoTransition
 import android.transition.TransitionManager
@@ -22,6 +27,7 @@ import edu.sunypoly.a2048.StateHandler.continuingGame
 import edu.sunypoly.a2048.StateHandler.currentState
 import edu.sunypoly.a2048.StateHandler.grid
 import edu.sunypoly.a2048.StateHandler.moveCount
+import edu.sunypoly.a2048.StateHandler.newGame
 import edu.sunypoly.a2048.StateHandler.over
 import edu.sunypoly.a2048.StateHandler.previousState
 import edu.sunypoly.a2048.StateHandler.updateState
@@ -31,7 +37,10 @@ import edu.sunypoly.a2048.TimerHandler.startTimer
 import kotlinx.android.synthetic.main.activity_index.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.*
+import java.text.SimpleDateFormat
 import java.util.*
+
 
 val TAG: (Any) -> String = { it.javaClass.simpleName }
 
@@ -57,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
-        GlobalScope.launch{
+        GlobalScope.launch {
             Stats.init(this@MainActivity)
         }
 
@@ -109,7 +118,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     private fun updateDisplayedData(score: Int, highScore: Int) {
         score_view.text = formatScore(score)
         best_score.text = formatScore(highScore)
@@ -159,8 +167,103 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun share(view: View) {
-        TODO()
+        if (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    0)
+        } else {
+            takeScreenshot()
+        }
     }
+
+    private fun takeScreenshot() {
+
+        val now = Date()
+        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now)
+
+        try {
+            // image naming and path  to include sd card  appending name you choose for file
+            val mPath = Environment.getExternalStorageDirectory().toString() + "/" + now + ".jpg"
+
+            // create bitmap screen capture
+            val v1 = window.decorView.rootView
+            v1.isDrawingCacheEnabled = true
+            val bitmap = Bitmap.createBitmap(v1.drawingCache)
+            v1.isDrawingCacheEnabled = false
+
+            val imageFile = File(mPath)
+
+            val outputStream = FileOutputStream(imageFile)
+            val quality = 100
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+            outputStream.flush()
+            outputStream.close()
+
+            openScreenshot(imageFile)
+        } catch (e: Throwable) {
+            // Several error may come out with file handling or DOM
+            e.printStackTrace()
+        }
+
+    }
+
+    private fun openScreenshot(imageFile: File) {
+        val intent = Intent()
+        intent.action = Intent.ACTION_VIEW
+        val uri = Uri.fromFile(imageFile)
+        intent.setDataAndType(uri, "image/*")
+        startActivity(intent)
+    }
+
+
+    fun shareScreenShot(imageFile: File) {
+        val intent = Intent()
+        intent.action = Intent.ACTION_VIEW
+        val uri = Uri.fromFile(imageFile)
+        intent.setDataAndType(uri, "image/*")
+        startActivity(intent)
+    }
+
+    /*fun share(view: View) {
+        val sharingIntent = Intent(Intent.ACTION_SEND)
+        val screenshotUri = takeScreenshot()
+//        val stream = contentResolver.openInputStream(screenshotUri)
+
+        sharingIntent.type = "image/jpeg"
+        sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        sharingIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri)
+        startActivity(Intent.createChooser(sharingIntent, "Share screenshot"))
+    }*/
+/*
+    private fun takeScreenshot(): Uri {
+
+        // create bitmap screen capture
+        val v1 = window.decorView.rootView
+        val fileName = SimpleDateFormat("yyyy-MM-dd_hh:mm:ss",
+                Locale.getDefault()).format(System.currentTimeMillis())
+
+        val bitmap: Bitmap
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            bitmap = Bitmap.createBitmap(v1.width, v1.height, Bitmap.Config.ARGB_8888)
+            PixelCopy.request(window, bitmap, {}, Handler())
+        } else {
+            v1.isDrawingCacheEnabled = true
+            bitmap = Bitmap.createBitmap(v1.drawingCache)
+            v1.isDrawingCacheEnabled = false
+        }
+
+        val imageFile = File(filesDir, fileName)
+
+        val outputStream = FileOutputStream(imageFile)
+        val quality = 100
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+        outputStream.flush()
+        outputStream.close()
+
+        return FileProvider.getUriForFile(this, applicationContext.packageName, imageFile)
+    }*/
 
     private fun dismissMessage() {
         message_container.visibility = View.GONE
@@ -537,9 +640,9 @@ class MainActivity : AppCompatActivity() {
         previousState?.let {
             //Revert gamesReached count if user just got there
             val maxTile = currentState.grid.maxVal()
-            if (maxTile != previousState?.grid?.maxVal()){
+            if (maxTile != previousState?.grid?.maxVal()) {
                 val tileStats = Stats.tileStats[currentState.grid.maxVal()]
-                tileStats?.let{
+                tileStats?.let {
                     tileStats.gamesReached--
                 }
             }
