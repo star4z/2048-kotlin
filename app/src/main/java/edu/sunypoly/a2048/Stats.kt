@@ -1,6 +1,7 @@
 package edu.sunypoly.a2048
 
 import android.content.Context
+import android.util.Log
 import java.io.*
 
 object Stats : Serializable {
@@ -38,6 +39,8 @@ object Stats : Serializable {
             bestScore = o.bestScore
             totalScore = o.totalScore
             topTile = o.topTile
+
+            Log.d(TAG(this), "tileStats=${o.tileStats}")
 
             tileStats = o.tileStats
         }

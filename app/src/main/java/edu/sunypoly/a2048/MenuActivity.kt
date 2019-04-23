@@ -78,7 +78,7 @@ class MenuActivity : AppCompatActivity() {
     }
 
     fun onAboutClicked(view: View) {
-        TODO()
+        startActivity(Intent(this, AboutActivity::class.java))
     }
 }
 

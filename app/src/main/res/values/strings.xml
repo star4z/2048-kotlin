@@ -19,7 +19,6 @@
     <string name="undo_on">Undo ON</string>
     <string name="swipe_anywhere_off">Swipe Anywhere OFF</string>
     <string name="how_to_play">How to play</string>
-    <string name="about_2048">About 2048</string>
     <string name="back">back</string>
     <string name="statistics_info_text">All play statistics are cumulative across all games played.
         They include:\n\nBest Score - Your highest score from any game. \n\nTotal Score - Your total
@@ -58,4 +57,8 @@
     <string name="how_to_p5">On the home screen you can toggle the Sounds, Undo, and Swipe Anywhere
         features on/off with a tap. Swipe Anywhere enabled players to swipe anywhere on the screen
         (not just on the board).</string>
+    <string name="about_2048">About 2048</string>
+    <string name="about_p0">This is an unofficial mobile version of 2048, created by Benjamin Phillips.</string>
+    <string name="classic_play_or_time_trial">Classic play or Time trial</string>
+    <string name="about_p1">Don\'t hesitate in Time trial play. The tiles won\'t wait for your move before they appear. Survive as long as you can. The game is over when the board fills up!</string>
 </resources>

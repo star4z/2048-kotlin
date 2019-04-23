@@ -49,6 +49,8 @@ val TAG: (Any) -> String = { it.javaClass.simpleName }
 @Suppress("UNUSED_PARAMETER")
 class MainActivity : AppCompatActivity() {
 
+    //TODO: make swipe anywhere preference affect functionality
+
     private var tilesToRemove = ArrayList<Tile>()
 
     private var scale = 1f
@@ -222,6 +224,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    //TODO: change back to 2/4
     private fun addAt(p: Pos, value: Int = 256/*if ((0..9).random() < 9) 2 else 4*/) {
         grid[p] = Tile(p, value)
 
