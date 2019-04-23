@@ -110,6 +110,15 @@
             app:layout_constraintTop_toBottomOf="@+id/total_score_text"
             android:text="@string/default_score"/>
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/top_tile_text" />
+
 
     </android.support.constraint.ConstraintLayout>
 

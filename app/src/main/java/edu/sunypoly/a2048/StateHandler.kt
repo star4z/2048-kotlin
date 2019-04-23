@@ -48,7 +48,7 @@ object StateHandler {
         return false
     }
 
-    fun newGame(listener: () -> Unit){
+    fun newGame(listener: () -> Unit) {
 
         previousScore = 0
         score = 0
@@ -101,31 +101,29 @@ object StateHandler {
 
         Stats.bestScore = highScore
 
-        val currentMax = grid.maxVal()
+        val currentMaxVal = grid.maxVal()
         val time = System.currentTimeMillis() - startTime + previouslyElapsedTime
 
-        if (currentMax > Stats.topTile) {
-            Stats.topTile = currentMax
 
+        if (currentMaxVal > Stats.topTile) {
+            Stats.topTile = currentMaxVal
 
-            if (currentMax >= 512) {
-                Stats.tileStats[currentMax] = Stats.TileStats( 1, time, moveCount)
+            if (currentMaxVal >= 512) {
+                Stats.tileStats.add(Stats.TileStats(currentMaxVal, 1, time, moveCount))
             }
         }
 
-        if (Stats.tileStats.containsKey(currentMax)) {
-            val stats = Stats.tileStats[currentMax]
+        val stats = Stats.containsStats(currentMaxVal)
 
-            stats?.let {
-                stats.gamesReached++
-                if (time < stats.shortestTime) {
-                    stats.shortestTime = time
-                }
-                if (moveCount < stats.fewestMoves) {
-                    stats.fewestMoves = moveCount
-                }
+        stats?.apply {
+            gamesReached++
+            if (time < shortestTime) {
+                shortestTime = time
             }
-
+            if (moveCount < fewestMoves) {
+                fewestMoves = moveCount
+            }
+            Stats.writeToFile()
         }
 
         listener(score, highScore)

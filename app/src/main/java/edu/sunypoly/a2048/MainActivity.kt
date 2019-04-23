@@ -105,6 +105,12 @@ class MainActivity : AppCompatActivity() {
         } else {
             undo_button.visibility = View.GONE
         }
+
+        if (over) {
+            promptGameOver()
+        } else if (won && !continuingGame) {
+            promptContinue()
+        }
     }
 
     override fun onPause() {
@@ -178,7 +184,7 @@ class MainActivity : AppCompatActivity() {
 
             if (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
+                    == PackageManager.PERMISSION_GRANTED) {
                 takeScreenshot()
             } else {
                 Toast.makeText(this,
@@ -205,85 +211,6 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent.createChooser(intent, "Share Image"))
     }
 
-    /*private fun takeScreenshot() {
-
-        val now = Date()
-        android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now)
-
-        try {
-            // image naming and path  to include sd card  appending name you choose for file
-            val mPath = Environment.getExternalStorageDirectory().toString() + "/" + now + ".jpg"
-
-            // create bitmap screen capture
-            val v1 = window.decorView.rootView
-            v1.isDrawingCacheEnabled = true
-            val bitmap = Bitmap.createBitmap(v1.drawingCache)
-            v1.isDrawingCacheEnabled = false
-
-            val imageFile = File(mPath)
-
-            val outputStream = FileOutputStream(imageFile)
-            val quality = 100
-            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
-            outputStream.flush()
-            outputStream.close()
-
-//            openScreenshot(imageFile)
-        } catch (e: Throwable) {
-            // Several error may come out with file handling or DOM
-            e.printStackTrace()
-        }
-
-    }*/
-
-//    private fun openScreenshot(imageFile: File) {
-//        val intent = Intent()
-//        intent.action = Intent.ACTION_VIEW
-//        val uri = Uri.fromFile(imageFile)
-//        intent.setDataAndType(uri, "image/*")
-//        startActivity(intent)
-//    }
-
-
-    /*fun share(view: View) {
-        val sharingIntent = Intent(Intent.ACTION_SEND)
-        val screenshotUri = takeScreenshot()
-//        val stream = contentResolver.openInputStream(screenshotUri)
-
-        sharingIntent.type = "image/jpeg"
-        sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        sharingIntent.putExtra(Intent.EXTRA_STREAM, screenshotUri)
-        startActivity(Intent.createChooser(sharingIntent, "Share screenshot"))
-    }*/
-/*
-    private fun takeScreenshot(): Uri {
-
-        // create bitmap screen capture
-        val v1 = window.decorView.rootView
-        val fileName = SimpleDateFormat("yyyy-MM-dd_hh:mm:ss",
-                Locale.getDefault()).format(System.currentTimeMillis())
-
-        val bitmap: Bitmap
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            bitmap = Bitmap.createBitmap(v1.width, v1.height, Bitmap.Config.ARGB_8888)
-            PixelCopy.request(window, bitmap, {}, Handler())
-        } else {
-            v1.isDrawingCacheEnabled = true
-            bitmap = Bitmap.createBitmap(v1.drawingCache)
-            v1.isDrawingCacheEnabled = false
-        }
-
-        val imageFile = File(filesDir, fileName)
-
-        val outputStream = FileOutputStream(imageFile)
-        val quality = 100
-        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
-        outputStream.flush()
-        outputStream.close()
-
-        return FileProvider.getUriForFile(this, applicationContext.packageName, imageFile)
-    }*/
-
     private fun dismissMessage() {
         message_container.visibility = View.GONE
     }
@@ -295,7 +222,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun addAt(p: Pos, value: Int = if ((0..9).random() < 9) 2 else 4) {
+    private fun addAt(p: Pos, value: Int = 256/*if ((0..9).random() < 9) 2 else 4*/) {
         grid[p] = Tile(p, value)
 
         val tile = createTileTextView(value)
@@ -319,9 +246,7 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("InflateParams")
     private fun createTileTextView(value: Int): TextView {
-        val inflater = LayoutInflater.from(this)
-
-        val tile = inflater.inflate(R.layout.tile, null) as TextView
+        val tile = layoutInflater.inflate(R.layout.tile, null) as TextView
         tile.id = View.generateViewId()
 
         with(tile) {

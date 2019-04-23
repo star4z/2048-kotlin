@@ -21,7 +21,7 @@ object Stats : Serializable {
             writeToFile()
         }
 
-    var tileStats = Stats.TileStatsMap()
+    var tileStats = ArrayList<TileStats>()
 
     private var file: File? = null
 
@@ -30,7 +30,7 @@ object Stats : Serializable {
         readFromFile()
     }
 
-    fun readFromFile() {
+    private fun readFromFile() {
         if (file?.exists() == true) {// gross, but correct, apparently (null check)
             val ois = ObjectInputStream(FileInputStream(file))
             val o = ois.readObject() as Stats
@@ -50,18 +50,9 @@ object Stats : Serializable {
         oos.close()
     }
 
-    data class TileStats(var gamesReached: Int = 0, var shortestTime: Long = 0, var fewestMoves: Int = 0) : Serializable
+    data class TileStats(val value: Int, var gamesReached: Int = 0, var shortestTime: Long = 0, var fewestMoves: Int = 0) : Serializable
 
-    class TileStatsMap:HashMap<Int, TileStats>(){
-        override fun put(key: Int, value: TileStats): TileStats? {
-            val v = super.put(key, value)
-            writeToFile()
-            return v
-        }
-
-        override fun putAll(from: Map<out Int, TileStats>) {
-            super.putAll(from)
-            writeToFile()
-        }
+    fun containsStats(x: Int): TileStats? {
+        return tileStats.firstOrNull { stats -> stats.value == x }
     }
 }
