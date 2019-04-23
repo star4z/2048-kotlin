@@ -7,11 +7,14 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.preference.PreferenceManager
+import android.provider.MediaStore
 import android.support.constraint.ConstraintSet
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -27,7 +30,6 @@ import edu.sunypoly.a2048.StateHandler.continuingGame
 import edu.sunypoly.a2048.StateHandler.currentState
 import edu.sunypoly.a2048.StateHandler.grid
 import edu.sunypoly.a2048.StateHandler.moveCount
-import edu.sunypoly.a2048.StateHandler.newGame
 import edu.sunypoly.a2048.StateHandler.over
 import edu.sunypoly.a2048.StateHandler.previousState
 import edu.sunypoly.a2048.StateHandler.updateState
@@ -37,8 +39,8 @@ import edu.sunypoly.a2048.TimerHandler.startTimer
 import kotlinx.android.synthetic.main.activity_index.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.io.*
-import java.text.SimpleDateFormat
+import java.io.File
+import java.io.FileOutputStream
 import java.util.*
 
 
@@ -173,12 +175,37 @@ class MainActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this,
                     arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     0)
+
+            if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                takeScreenshot()
+            } else {
+                Toast.makeText(this,
+                        "Sharing requires temporarily storing a screenshot.",
+                        Toast.LENGTH_LONG).show()
+            }
         } else {
             takeScreenshot()
         }
     }
 
     private fun takeScreenshot() {
+        val v1 = window.decorView.rootView
+        v1.isDrawingCacheEnabled = true
+        val mBitmap = Bitmap.createBitmap(v1.drawingCache)
+        v1.isDrawingCacheEnabled = false
+
+        val path = MediaStore.Images.Media.insertImage(contentResolver, mBitmap, "Image Description", null)
+        val uri = Uri.parse(path)
+
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "image/jpeg"
+        intent.putExtra(Intent.EXTRA_STREAM, uri)
+        startActivity(Intent.createChooser(intent, "Share Image"))
+    }
+
+    /*private fun takeScreenshot() {
 
         val now = Date()
         android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now)
@@ -201,30 +228,22 @@ class MainActivity : AppCompatActivity() {
             outputStream.flush()
             outputStream.close()
 
-            openScreenshot(imageFile)
+//            openScreenshot(imageFile)
         } catch (e: Throwable) {
             // Several error may come out with file handling or DOM
             e.printStackTrace()
         }
 
-    }
+    }*/
 
-    private fun openScreenshot(imageFile: File) {
-        val intent = Intent()
-        intent.action = Intent.ACTION_VIEW
-        val uri = Uri.fromFile(imageFile)
-        intent.setDataAndType(uri, "image/*")
-        startActivity(intent)
-    }
+//    private fun openScreenshot(imageFile: File) {
+//        val intent = Intent()
+//        intent.action = Intent.ACTION_VIEW
+//        val uri = Uri.fromFile(imageFile)
+//        intent.setDataAndType(uri, "image/*")
+//        startActivity(intent)
+//    }
 
-
-    fun shareScreenShot(imageFile: File) {
-        val intent = Intent()
-        intent.action = Intent.ACTION_VIEW
-        val uri = Uri.fromFile(imageFile)
-        intent.setDataAndType(uri, "image/*")
-        startActivity(intent)
-    }
 
     /*fun share(view: View) {
         val sharingIntent = Intent(Intent.ACTION_SEND)
