@@ -1,11 +1,18 @@
 package edu.sunypoly.a2048
 
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-open class BoringActivity: AppCompatActivity(){
+abstract class BoringActivity: AppCompatActivity(){
+
+    private lateinit var click: MediaPlayer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -13,6 +20,8 @@ open class BoringActivity: AppCompatActivity(){
         window.navigationBarColor = tan
 
         hideSystemUI()
+
+        click = MediaPlayer.create(this, R.raw.click)
     }
 
     override fun onResume() {
@@ -31,6 +40,11 @@ open class BoringActivity: AppCompatActivity(){
 
     @Suppress("UNUSED_PARAMETER")
     fun back(view: View) {
+        if (PreferenceManager.getDefaultSharedPreferences(this)[SOUND_ENABLED, true]){
+            GlobalScope.launch {
+                click.start()
+            }
+        }
         finish()
     }
 }
