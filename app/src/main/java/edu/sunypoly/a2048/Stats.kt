@@ -7,20 +7,8 @@ import java.io.*
 object Stats : Serializable {
 
     var bestScore = 0
-        set(value) {
-            field = value
-            writeToFile()
-        }
     var totalScore = 0
-        set(value) {
-            field = value
-            writeToFile()
-        }
     var topTile = 0
-        set(value) {
-            field = value
-            writeToFile()
-        }
 
     var tileStats = ArrayList<TileStats>()
 
@@ -34,28 +22,33 @@ object Stats : Serializable {
     private fun readFromFile() {
         if (file?.exists() == true) {// gross, but correct, apparently (null check)
             val ois = ObjectInputStream(FileInputStream(file))
-            val o = ois.readObject() as Stats
 
-            bestScore = o.bestScore
-            totalScore = o.totalScore
-            topTile = o.topTile
+            bestScore = ois.readInt()
+            totalScore = ois.readInt()
+            topTile = ois.readInt()
 
-            Log.d(TAG(this), "tileStats=${o.tileStats}")
+            @Suppress("UNCHECKED_CAST")
+            tileStats = ois.readObject() as ArrayList<TileStats>
+            ois.close()
 
-            tileStats = o.tileStats
         }
     }
 
     fun writeToFile() {
-        file?.createNewFile()
+
         val oos = ObjectOutputStream(FileOutputStream(file))
-        oos.writeObject(this)
+
+        oos.writeInt(bestScore)
+        oos.writeInt(totalScore)
+        oos.writeInt(topTile)
+        oos.writeObject(tileStats)
+        oos.flush()
         oos.close()
     }
 
     data class TileStats(val value: Int, var gamesReached: Int = 0, var shortestTime: Long = 0, var fewestMoves: Int = 0) : Serializable
 
-    fun containsStats(x: Int): TileStats? {
+    fun getStatForValue(x: Int): TileStats? {
         return tileStats.firstOrNull { stats -> stats.value == x }
     }
 }

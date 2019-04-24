@@ -113,9 +113,9 @@ object StateHandler {
             }
         }
 
-        val stats = Stats.containsStats(currentMaxVal)
+        val currentMaxStat = Stats.getStatForValue(currentMaxVal)
 
-        stats?.apply {
+        currentMaxStat?.apply {
             gamesReached++
             if (time < shortestTime) {
                 shortestTime = time
@@ -123,8 +123,9 @@ object StateHandler {
             if (moveCount < fewestMoves) {
                 fewestMoves = moveCount
             }
-            Stats.writeToFile()
         }
+
+        Stats.writeToFile()
 
         listener(score, highScore)
     }

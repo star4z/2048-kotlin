@@ -7,11 +7,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
 import android.preference.PreferenceManager
 import android.provider.MediaStore
@@ -22,7 +19,6 @@ import android.support.v7.app.AppCompatActivity
 import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -39,8 +35,6 @@ import edu.sunypoly.a2048.TimerHandler.startTimer
 import kotlinx.android.synthetic.main.activity_index.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.io.File
-import java.io.FileOutputStream
 import java.util.*
 
 
@@ -120,6 +114,7 @@ class MainActivity : AppCompatActivity() {
 
         updateState()
         StateHandler.saveState(this)
+        Stats.writeToFile()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -153,7 +148,6 @@ class MainActivity : AppCompatActivity() {
         showMessage("You win!")
         message_container.setBackgroundColor(ContextCompat.getColor(this, R.color.transparentYellow))
         keep_going_button.visibility = View.VISIBLE
-
     }
 
     private fun promptGameOver() {
@@ -588,9 +582,9 @@ class MainActivity : AppCompatActivity() {
             //Revert gamesReached count if user just got there
             val maxTile = currentState.grid.maxVal()
             if (maxTile != previousState?.grid?.maxVal()) {
-                val tileStats = Stats.tileStats[currentState.grid.maxVal()]
-                tileStats?.let {
-                    tileStats.gamesReached--
+                val currentMaxStat = Stats.getStatForValue(currentState.grid.maxVal())
+                currentMaxStat?.let {
+                    it.gamesReached--
                 }
             }
             grid.forEach { tile ->
