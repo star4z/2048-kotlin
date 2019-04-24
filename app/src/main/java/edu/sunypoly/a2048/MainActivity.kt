@@ -102,6 +102,16 @@ class MainActivity : AppCompatActivity() {
             undo_button.visibility = View.GONE
         }
 
+        if (prefs[SWIPE_ANYWHERE_ENABLED, false]) {
+            val constraints = ConstraintSet()
+            constrainToTarget(constraints, touch_receiver.id, ConstraintSet.PARENT_ID)
+            constraints.applyTo(full_page)
+        } else {
+            val constraints = ConstraintSet()
+            constrainToTarget(constraints, touch_receiver.id, game_container.id)
+            constraints.applyTo(full_page)
+        }
+
         if (over) {
             promptGameOver()
         } else if (won && !continuingGame) {
@@ -157,8 +167,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showMessage(str: String) {
+        touch_receiver.visibility = View.GONE
         message_container.visibility = View.VISIBLE
         message.text = str
+    }
+
+    private fun dismissMessage() {
+        message_container.visibility = View.GONE
+        touch_receiver.visibility = View.VISIBLE
     }
 
     fun tryAgain(view: View) {
@@ -207,9 +223,7 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent.createChooser(intent, "Share Image"))
     }
 
-    private fun dismissMessage() {
-        message_container.visibility = View.GONE
-    }
+
 
     private fun addRandom() {
         val available = grid.availablePositions()
@@ -217,9 +231,7 @@ class MainActivity : AppCompatActivity() {
         addAt(newPos)
     }
 
-
-    //TODO: change back to 2/4
-    private fun addAt(p: Pos, value: Int = 256/*if ((0..9).random() < 9) 2 else 4*/) {
+    private fun addAt(p: Pos, value: Int = if ((0..9).random() < 9) 2 else 4) {
         grid[p] = Tile(p, value)
 
         val tile = createTileTextView(value)
