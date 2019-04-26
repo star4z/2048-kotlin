@@ -1,7 +1,10 @@
 package edu.sunypoly.a2048
 
 import android.content.Intent
+import android.content.SharedPreferences
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -9,14 +12,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_statistics.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
 class StatisticsActivity : BoringActivity() {
 
+    private lateinit var prefs: SharedPreferences
+    private lateinit var tap: MediaPlayer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_statistics)
+
+        tap = MediaPlayer.create(this, R.raw.tap)
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
         best_score_val.text = Stats.bestScore.toString()
         total_score_val.text = Stats.totalScore.toString()
@@ -29,7 +40,16 @@ class StatisticsActivity : BoringActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun info(view: View) {
+        playTap()
         startActivity(Intent(this, InfoActivity::class.java))
+    }
+
+    private fun playTap() {
+        if (prefs[SOUND_ENABLED, true]) {
+            GlobalScope.launch {
+                tap.start()
+            }
+        }
     }
 
 

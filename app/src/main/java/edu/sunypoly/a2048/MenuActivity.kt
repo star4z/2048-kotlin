@@ -59,7 +59,7 @@ class MenuActivity : AppCompatActivity() {
     }
 
     fun onTimeTrialClicked(view: View) {
-        TODO()
+        //TODO
     }
 
     fun onStatisticsClicked(view: View) {

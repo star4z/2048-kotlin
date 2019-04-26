@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -58,6 +59,11 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var prefs: SharedPreferences
 
+    private lateinit var click: MediaPlayer
+    private lateinit var tap: MediaPlayer
+    private lateinit var whoosh: MediaPlayer
+    private lateinit var pop: MediaPlayer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_index)
@@ -73,6 +79,11 @@ class MainActivity : AppCompatActivity() {
 
         scale = resources.displayMetrics.density
         margin = tile_0_0.paddingTop
+
+        click = MediaPlayer.create(this, R.raw.click)
+        tap = MediaPlayer.create(this, R.raw.tap)
+        whoosh = MediaPlayer.create(this, R.raw.whoosh)
+        pop = MediaPlayer.create(this, R.raw.pop)
     }
 
     override fun onResume() {
@@ -178,15 +189,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun tryAgain(view: View) {
+        playClick()
         newGame()
     }
 
     fun keepGoing(view: View) {
+        playClick()
         dismissMessage()
         continuingGame = true
     }
 
     fun share(view: View) {
+        playClick()
         if (ContextCompat.checkSelfPermission(this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -222,7 +236,6 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra(Intent.EXTRA_STREAM, uri)
         startActivity(Intent.createChooser(intent, "Share Image"))
     }
-
 
 
     private fun addRandom() {
@@ -434,8 +447,13 @@ class MainActivity : AppCompatActivity() {
         transition.duration = 100
         val constraintSet = ConstraintSet()
 
+        val combinedAny = !tilesToRemove.isEmpty()
+
+        playWhoosh(combinedAny)
+
         grid.forEach { tile ->
             tile?.let {
+                //Update moved tiles
                 if (tile.previousPos != tile.pos) {
                     var textView = tile.textView
                     if (tile.mergedFrom != null) {
@@ -450,8 +468,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         tilesToRemove.forEach { tile ->
-            //            Log.d(TAG(this), "Removing tile $tile with textView ${tile.textView} after moving " +
-//                    "it from ${tile.previousPos} to ${tile.pos}")
             constrainToTarget(constraintSet, tile.textView!!.id, tile.pos)
         }
 
@@ -469,19 +485,12 @@ class MainActivity : AppCompatActivity() {
 
         addRandom()
 
-//        Log.d(TAG(this), "movesAvailable=${movesAvailable()}")
         if (!movesAvailable()) {
             over = true
         }
 
-//        Log.d(TAG(this), "previous grid before update = \n${previousState!!.grid}")
-
         updateState()
         StateHandler.saveState(this)
-
-//        Log.d(TAG(this), "previous grid after update = \n${previousState!!.grid}")
-
-//        logBoard()
 
         if (won && !continuingGame) {
             promptContinue()
@@ -529,6 +538,7 @@ class MainActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun promptNewGame(view: View?) {
+        playTap()
         AlertDialog.Builder(this).apply {
             title = "New Game"
             setMessage("Are you sure you want to start a new game?")
@@ -590,6 +600,7 @@ class MainActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun undo(view: View) {
+        playTap()
         previousState?.let {
             //Revert gamesReached count if user just got there
             val maxTile = currentState.grid.maxVal()
@@ -630,12 +641,46 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openMenu(view: View) {
+        playClick()
         startActivity(Intent(this, MenuActivity::class.java))
     }
 
 
     fun viewStats(view: View) {
+        playClick()
         startActivity(Intent(this, StatisticsActivity::class.java))
+    }
+
+    private fun playClick() {
+        if (prefs[SOUND_ENABLED, true]) {
+            GlobalScope.launch {
+                click.start()
+            }
+        }
+    }
+
+    private fun playTap() {
+        if (prefs[SOUND_ENABLED, true]) {
+            GlobalScope.launch {
+                tap.start()
+            }
+        }
+    }
+
+    private fun playWhoosh(playPopAfter: Boolean = false) {
+        if (prefs[SOUND_ENABLED, true]) {
+            GlobalScope.launch {
+                whoosh.start()
+            }.invokeOnCompletion { if (playPopAfter) playPop() }
+        }
+    }
+
+    private fun playPop() {
+        if (prefs[SOUND_ENABLED, true]) {
+            GlobalScope.launch {
+                pop.start()
+            }
+        }
     }
 }
 
