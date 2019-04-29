@@ -21,6 +21,7 @@ import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.util.Log
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
 import edu.sunypoly.a2048.StateHandler.continuingGame
@@ -454,9 +455,13 @@ class MainActivity : AppCompatActivity() {
                 //Update moved tiles
                 if (tile.previousPos != tile.pos) {
                     var textView = tile.textView
+
+                    //Add combined tile
                     if (tile.mergedFrom != null) {
                         textView = createTileTextView(tile.value)
                         applyDefaultConstraints(constraintSet, textView.id)
+                        val pop = AnimationUtils.loadAnimation(this, R.anim.pop)
+                        textView.startAnimation(pop)
                     }
                     textView?.let { constrainToTarget(constraintSet, textView.id, tile.pos) }
                             ?: Log.d(TAG(this), "Found a null TextView @ ${tile.pos}")
@@ -473,7 +478,6 @@ class MainActivity : AppCompatActivity() {
         constraintSet.applyTo(game_container)
 
         tilesToRemove.forEach {
-            //TODO: add "popping" animation (gets larger then smaller)
             game_container.removeView(it.textView)
         }
 
