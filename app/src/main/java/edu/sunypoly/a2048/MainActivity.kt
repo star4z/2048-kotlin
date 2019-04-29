@@ -44,8 +44,6 @@ val TAG: (Any) -> String = { it.javaClass.simpleName }
 @Suppress("UNUSED_PARAMETER")
 class MainActivity : AppCompatActivity() {
 
-    //TODO: make swipe anywhere preference affect functionality
-
     private var tilesToRemove = ArrayList<Tile>()
 
     private var scale = 1f
@@ -475,6 +473,7 @@ class MainActivity : AppCompatActivity() {
         constraintSet.applyTo(game_container)
 
         tilesToRemove.forEach {
+            //TODO: add "popping" animation (gets larger then smaller)
             game_container.removeView(it.textView)
         }
 
