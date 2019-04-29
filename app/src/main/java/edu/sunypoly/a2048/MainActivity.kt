@@ -37,6 +37,7 @@ import edu.sunypoly.a2048.TimerHandler.startTimer
 import kotlinx.android.synthetic.main.activity_index.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -56,12 +57,17 @@ class MainActivity : AppCompatActivity() {
     private var textBrown = 0
     private var textOffWhite = 0
 
-    lateinit var prefs: SharedPreferences
+    private lateinit var prefs: SharedPreferences
 
     private lateinit var click: MediaPlayer
     private lateinit var tap: MediaPlayer
     private lateinit var whoosh: MediaPlayer
     private lateinit var pop: MediaPlayer
+
+    private var isTimeTrialMode = false
+
+    private val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,7 +102,7 @@ class MainActivity : AppCompatActivity() {
             newGame()
         }
 
-        startTimer(handler, timer_text_view)
+        startTimer(handler, this::updateTimerTextView)
 
         logBoard()
         touch_receiver.setOnTouchListener(TileTouchListener(this))
@@ -140,6 +146,15 @@ class MainActivity : AppCompatActivity() {
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) hideSystemUI()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        intent?.extras?.let {
+            isTimeTrialMode = it.getBoolean(TIME_TRIAL, false)
+        }
+        Log.d(TAG(this), "time trial mode?$isTimeTrialMode")
     }
 
 
@@ -221,6 +236,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun takeScreenshot() {
         val v1 = window.decorView.rootView
         v1.isDrawingCacheEnabled = true
@@ -239,8 +255,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun addRandom() {
         val available = grid.availablePositions()
-        val newPos = available.removeAt((0 until available.size).random())
-        addAt(newPos)
+        if (available.isEmpty() && isTimeTrialMode) {
+            over = true
+            won = false
+            continuingGame = false
+            promptGameOver()
+        } else {
+            val newPos = available.removeAt((0 until available.size).random())
+            addAt(newPos)
+        }
     }
 
     private fun addAt(p: Pos, value: Int = if ((0..9).random() < 9) 2 else 4) {
@@ -579,7 +602,7 @@ class MainActivity : AppCompatActivity() {
             updateState()
             StateHandler.saveState(this)
 
-            startTimer(handler, timer_text_view)
+            startTimer(handler, this::updateTimerTextView)
         }
     }
 
@@ -640,6 +663,15 @@ class MainActivity : AppCompatActivity() {
             tile?.let {
                 addAt(tile.pos, tile.value)
             }
+        }
+    }
+
+    private fun updateTimerTextView(callCount: Int = 0){
+        val strDate = dateFormat.format(System.currentTimeMillis() - StateHandler.startTime + StateHandler.previouslyElapsedTime)
+        timer_text_view.text = strDate
+
+        if (isTimeTrialMode && callCount % 2 == 0) {
+            addRandom()
         }
     }
 

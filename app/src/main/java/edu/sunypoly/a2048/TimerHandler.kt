@@ -1,23 +1,24 @@
 package edu.sunypoly.a2048
 
 import android.os.Handler
-import android.widget.TextView
-import java.text.SimpleDateFormat
 import java.util.*
 
 object TimerHandler {
 
-    var timer: Timer? = null
-    lateinit var timerTask: TimerTask
+    private var timer: Timer? = null
+    private lateinit var timerTask: TimerTask
+    private var callCount = 0
 
-    fun startTimer(handler: Handler, textView: TextView) {
+    fun startTimer(handler: Handler, callback: (Int) -> Unit) {
         if (timer != null) {
             stopTimer()
         }
 
+        callCount = 0
+
         timer = Timer()
 
-        initializeTimerTask(handler, textView)
+        initializeTimerTask(handler, callback)
 
         timer?.schedule(timerTask, 0, 1000)
     }
@@ -29,17 +30,16 @@ object TimerHandler {
         }
     }
 
-    private fun initializeTimerTask(handler: Handler, textView: TextView) {
+    private fun initializeTimerTask(handler: Handler, callback: (Int) -> Unit) {
         timerTask = object : TimerTask() {
             /**
              * The action to be performed by this timer task.
              */
             override fun run() {
-                handler.post {
-                    val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
-                    val strDate = dateFormat.format(System.currentTimeMillis() - StateHandler.startTime + StateHandler.previouslyElapsedTime)
+                callCount++
 
-                    textView.text = strDate
+                handler.post {
+                    callback(callCount)
                 }
             }
         }

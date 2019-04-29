@@ -16,6 +16,8 @@ const val SOUND_ENABLED = "pref_sound_enabled"
 const val UNDO_ENABLED = "pref_undo_enabled"
 const val SWIPE_ANYWHERE_ENABLED = "pref_swipe_anywhere_enabled"
 
+const val TIME_TRIAL = "opt_time_trial"
+
 @Suppress("UNUSED_PARAMETER")
 class MenuActivity : AppCompatActivity() {
 
@@ -59,7 +61,12 @@ class MenuActivity : AppCompatActivity() {
     }
 
     fun onTimeTrialClicked(view: View) {
-        //TODO add time trial mode
+        playTap()
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra(TIME_TRIAL, true)
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        finish()
+        startActivity(intent)
     }
 
     fun onStatisticsClicked(view: View) {
