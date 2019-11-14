@@ -3,3 +3,5 @@
 
 Contributers:
 Benjamin Phillips
+
+Available on the [Google Play store](https://play.google.com/store/apps/details?id=edu.sunypoly.a2048).
